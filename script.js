@@ -1,15 +1,17 @@
 const LEVELS = [
   `
-..............|||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||........
-..............|||||||||||||||||||||||!!!!||||||||||||||||||||||||||||||||||||||||||||||||||........
-..............|||||||||||||||||||||||||||||...|||.......||||||..................|||||||||||........
-..................|||||||||..........|....|........|..|||||||||..|||||||....||||||||...||||........
-..@...............|||||||.....||||........|....|..|....|||||||...|||||||||......||||............+..
-..................|...............|....|.......|........||||||..||||||||||......||||....||||.......
-..............|............|........|....|......|..|.................|||||.........|..||||||.......
-..............|........||||||||||||||....|.....|..||||||||||||.......|||||......|.....||||||.......
-..............||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||.......`,
+..............|||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||...........
+..............|||||||||||||||||||||||!!!!||||||||||||||||||||||||||||||||||||||||||||||||||...........
+..............|||||||||||||||||||||||||||||...|||.......||||||..................|||||||||||...........
+..................|||||||||..........|....|........|..|||||||||..|||||||....||||||||...||||...........
+..@...............|||||||.....||||........|....|..|....|||||||...|||||||||......||||............+.....
+..................|...............|....|.......|........||||||..||||||||||......||||....||||..........
+..............|............|........|....|......|..|.................|||||.........|..||||||..........
+..............|........||||||||||||||....|.....|..||||||||||||.......|||||......|.....||||||..........
+..............||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||..........`,
 ];
+
+let scale = 35;
 
 let Level = class Level {
   constructor(plan) {
@@ -32,6 +34,22 @@ let Level = class Level {
       });
     });
   }
+};
+
+Level.prototype.touches = function (pos, size, type) {
+  let xStart = Math.floor(pos.x);
+  let xEnd = Math.ceil(pos.x + size.x);
+  let yStart = Math.floor(pos.y);
+  let yEnd = Math.ceil(pos.y + size.y);
+
+  for (let y = yStart; y < yEnd; y++) {
+    for (let x = xStart; x < xEnd; x++) {
+      let isOutside = x < 0 || x >= this.width || y < 0 || y >= this.height;
+      let here = isOutside ? "rock" : this.rows[y][x];
+      if (here == type) return true;
+    }
+  }
+  return false;
 };
 
 let Vector = class Vector {
@@ -58,11 +76,60 @@ class Player {
   }
 
   static create(pos) {
-    return new Player(pos.plus(new Vector(0, -0.5)), new Vector(0, 0));
+    return new Player(pos.plus(new Vector(0, 0.25)), new Vector(0, 0));
   }
 }
 
-Player.prototype.size = new Vector(0.9, 0.7);
+Player.prototype.size = new Vector(0.8, 0.5);
+
+var playerSpeed = 7;
+
+Player.prototype.update = function (time, level, keys) {
+  let pos = this.pos;
+  let xSpeed = 0;
+  if (keys.ArrowLeft) xSpeed -= playerSpeed;
+  if (keys.ArrowRight) xSpeed += playerSpeed;
+  let movedX = pos.plus(new Vector(xSpeed * time, 0));
+
+  if (level.touches(movedX, this.size, "rock")) {
+    alert("Lost");
+  } else if (level.touches(movedX, this.size, "goal")) {
+    alert("Won");
+  } else pos = movedX;
+
+  let ySpeed = 0;
+  if (keys.ArrowUp) ySpeed -= playerSpeed;
+  if (keys.ArrowDown) ySpeed += playerSpeed;
+  let movedY = pos.plus(new Vector(0, ySpeed * time));
+
+  if (level.touches(movedY, this.size, "rock")) {
+    alert("Lost");
+  } else if (level.touches(movedX, this.size, "goal")) {
+    alert("Won");
+  } else pos = movedY;
+
+  return new Player(pos, new Vector(xSpeed, ySpeed));
+};
+
+function trackKeys(keys) {
+  let down = Object.create(null);
+  function track(event) {
+    if (keys.includes(event.key)) {
+      down[event.key] = event.type == "keydown";
+      event.preventDefault();
+    }
+  }
+  window.addEventListener("keydown", track);
+  window.addEventListener("keyup", track);
+  return down;
+}
+
+const arrowKeys = trackKeys([
+  "ArrowLeft",
+  "ArrowRight",
+  "ArrowUp",
+  "ArrowDown",
+]);
 
 const levelMap = {
   ".": "empty",
@@ -71,9 +138,87 @@ const levelMap = {
   "+": "goal",
 };
 
+class CanvasDisplay {
+  constructor(parent, level) {
+    this.canvas = document.createElement("canvas");
+    this.canvas.width = Math.min(600, level.width * scale);
+    this.canvas.height = Math.min(450, level.height * scale);
+    parent.appendChild(this.canvas);
+    this.cx = this.canvas.getContext("2d");
+
+    this.viewport = {
+      left: 0,
+      top: 0,
+      width: this.canvas.width / scale,
+      height: this.canvas.height / scale,
+    };
+  }
+
+  clear() {
+    this.canvas.remove();
+  }
+}
+
+let tiles = document.createElement("img");
+tiles.src = "img/tile.png";
+
+CanvasDisplay.prototype.drawBackground = function (level) {
+  let { left, top, width, height } = this.viewport;
+  let xStart = Math.floor(left);
+  let xEnd = Math.ceil(left + width);
+  let yStart = Math.floor(top);
+  let yEnd = Math.ceil(top + height);
+
+  for (let y = yStart; y < yEnd; y++) {
+    for (let x = xStart; x < xEnd; x++) {
+      let tile = level.rows[y][x];
+      if (tile == "empty") continue;
+      let screenX = (x - left) * scale;
+      let screenY = (y - top) * scale;
+      let tileX = tile == "goal" ? scale : 0;
+      this.cx.drawImage(
+        tiles,
+        tileX,
+        0,
+        scale,
+        scale,
+        screenX,
+        screenY,
+        scale,
+        scale
+      );
+    }
+  }
+};
+
+CanvasDisplay.prototype.drawPlayer = function (player) {
+  this.cx.fillStyle = "blue";
+  this.cx.fillRect(
+    player.pos.x * scale,
+    player.pos.y * scale,
+    player.size.x * scale,
+    player.size.y * scale
+  );
+};
+
+CanvasDisplay.prototype.clearDisplay = function () {
+  this.cx.clearRect(0, 0, this.canvas.width, this.canvas.height);
+};
+
+CanvasDisplay.prototype.updateViewport = function (time, level) {
+  let view = this.viewport;
+  let speed = 1;
+
+  if (view.left < level.width - this.canvas.width / scale) {
+    view.left += time * speed;
+  } else {
+    view.left = level.width - this.canvas.width / scale;
+  }
+};
+
 let level = new Level(LEVELS[0]);
 
-console.log(level);
+console.log(level.player);
 
 function animate(deltaTimeFunc) {
   let lastTime = 0;
@@ -88,4 +233,14 @@ function animate(deltaTimeFunc) {
   requestAnimationFrame(frame);
 }
 
-//animate((deltaTime) => console.log(deltaTime));
+let canv = new CanvasDisplay(document.body, level);
+
+//console.log(canv);
+
+animate((deltaTime) => {
+  canv.updateViewport(deltaTime, level);
+  canv.clearDisplay();
+  canv.drawBackground(level);
+  level.player = level.player.update(deltaTime, level, arrowKeys);
+  canv.drawPlayer(level.player);
+});
