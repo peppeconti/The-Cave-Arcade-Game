@@ -23,7 +23,7 @@ let Level = class Level {
 
     this.rows = rows.map((row, y) => {
       return row.map((ch, x) => {
-        let type = levelChars[ch];
+        let type = levelMap[ch];
         if (typeof type === "string") return type;
         if (typeof type === "function") {
           this.player = type.create(new Vector(x, y), 0);
@@ -64,7 +64,7 @@ class Player {
 
 Player.prototype.size = new Vector(0.9, 0.7);
 
-const levelChars = {
+const levelMap = {
   ".": "empty",
   "|": "rock",
   "@": Player,
@@ -74,3 +74,18 @@ const levelChars = {
 let level = new Level(LEVELS[0]);
 
 console.log(level);
+
+function animate(deltaTimeFunc) {
+  let lastTime = 0;
+  const frame = (timeStamp) => {
+    if (lastTime) {
+      let deltaTime = Math.min(timeStamp - lastTime, 100) / 1000;
+      deltaTimeFunc(deltaTime);
+    }
+    lastTime = timeStamp;
+    requestAnimationFrame(frame);
+  };
+  requestAnimationFrame(frame);
+}
+
+//animate((deltaTime) => console.log(deltaTime));
