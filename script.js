@@ -1,9 +1,9 @@
 const LEVELS = [
   `
-..............|||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||...........
-..............|||||||||||||||||||||||!!!!||||||||||||||||||||||||||||||||||||||||||||||||||...........
-..............|||||||||||||||||||||||||||||...|||.......||||||..................|||||||||||...........
-..................|||||||||..........|....|........|..|||||||||..|||||||....||||||||...||||...........
+..............||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||..........
+..............|||||||||||||||||||||||!!!!|||||||||||||||||||||||||||||||||||||||||||||||||||..........
+..............|||||||||||||||||||||||||||||...|||.......||||||..................||||||||||||..........
+..................|||||||||..........|....|........|..|||||||||..|||||||....||||||||...|||||..........
 ..@...............|||||||.....||||........|....|..|....|||||||...|||||||||......||||............+.....
 ..................|...............|....|.......|........||||||..||||||||||......||||....||||..........
 ..............|............|........|....|......|..|.................|||||.........|..||||||..........
@@ -46,7 +46,7 @@ Level.prototype.touches = function (pos, size, type) {
     for (let x = xStart; x < xEnd; x++) {
       let isOutside = x < 0 || x >= this.width || y < 0 || y >= this.height;
       let here = isOutside ? "rock" : this.rows[y][x];
-      if (here == type) return true;
+      if (here === type) return true;
     }
   }
   return false;
@@ -91,10 +91,10 @@ Player.prototype.update = function (time, level, keys) {
   if (keys.ArrowRight) xSpeed += playerSpeed;
   let movedX = pos.plus(new Vector(xSpeed * time, 0));
 
-  if (level.touches(movedX, this.size, "rock")) {
-    alert("Lost");
+  if (level.touches(movedX - time * 1, this.size, "rock")) {
+    console.log('lost');
   } else if (level.touches(movedX, this.size, "goal")) {
-    alert("Won");
+    console.log('won');
   } else pos = movedX;
 
   let ySpeed = 0;
@@ -103,9 +103,9 @@ Player.prototype.update = function (time, level, keys) {
   let movedY = pos.plus(new Vector(0, ySpeed * time));
 
   if (level.touches(movedY, this.size, "rock")) {
-    alert("Lost");
-  } else if (level.touches(movedX, this.size, "goal")) {
-    alert("Won");
+    console.log('lost');
+  } else if (level.touches(movedY, this.size, "goal")) {
+    console.log('won');
   } else pos = movedY;
 
   return new Player(pos, new Vector(xSpeed, ySpeed));
@@ -238,9 +238,10 @@ let canv = new CanvasDisplay(document.body, level);
 //console.log(canv);
 
 animate((deltaTime) => {
-  canv.updateViewport(deltaTime, level);
+ 
   canv.clearDisplay();
   canv.drawBackground(level);
+  canv.updateViewport(deltaTime, level);
   level.player = level.player.update(deltaTime, level, arrowKeys);
   canv.drawPlayer(level.player);
 });
