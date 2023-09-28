@@ -36,7 +36,7 @@ let Level = class Level {
   }
 };
 
-Level.prototype.touches = function (pos, size, type) {
+Level.prototype.touches = function (pos, size, type, viewport) {
   let xStart = Math.floor(pos.x);
   let xEnd = Math.ceil(pos.x + size.x);
   let yStart = Math.floor(pos.y);
@@ -44,7 +44,7 @@ Level.prototype.touches = function (pos, size, type) {
 
   for (let y = yStart; y < yEnd; y++) {
     for (let x = xStart; x < xEnd; x++) {
-      let isOutside = x < 0 || x >= this.width || y < 0 || y >= this.height;
+      let isOutside = x < viewport.left || x + size.x >= viewport.width + viewport.left || y < 0 || y >= viewport.height;
       let here = isOutside ? "rock" : this.rows[y][x];
       if (here === type) return true;
     }
@@ -84,17 +84,17 @@ Player.prototype.size = new Vector(0.8, 0.5);
 
 var playerSpeed = 7;
 
-Player.prototype.update = function (time, level, keys) {
+Player.prototype.update = function (time, level, keys, viewport) {
   let pos = this.pos;
-  let xSpeed = 0;
+  let xSpeed = time * 1;
   if (keys.ArrowLeft) xSpeed -= playerSpeed;
   if (keys.ArrowRight) xSpeed += playerSpeed;
-  let movedX = pos.plus(new Vector(xSpeed * time, 0));
+  let movedX = pos.plus(new Vector(xSpeed, 0));
 
-  if (level.touches(movedX - time * 1, this.size, "rock")) {
-    console.log('lost');
-  } else if (level.touches(movedX, this.size, "goal")) {
-    console.log('won');
+  if (level.touches(movedX, this.size, "rock", viewport)) {
+    console.log("lost");
+  } else if (level.touches(movedX, this.size, "goal", viewport)) {
+    console.log("won");
   } else pos = movedX;
 
   let ySpeed = 0;
@@ -102,10 +102,10 @@ Player.prototype.update = function (time, level, keys) {
   if (keys.ArrowDown) ySpeed += playerSpeed;
   let movedY = pos.plus(new Vector(0, ySpeed * time));
 
-  if (level.touches(movedY, this.size, "rock")) {
-    console.log('lost');
-  } else if (level.touches(movedY, this.size, "goal")) {
-    console.log('won');
+  if (level.touches(movedY, this.size, "rock", viewport)) {
+    console.log("lost");
+  } else if (level.touches(movedY, this.size, "goal", viewport)) {
+    console.log("won");
   } else pos = movedY;
 
   return new Player(pos, new Vector(xSpeed, ySpeed));
@@ -194,8 +194,8 @@ CanvasDisplay.prototype.drawBackground = function (level) {
 CanvasDisplay.prototype.drawPlayer = function (player) {
   this.cx.fillStyle = "blue";
   this.cx.fillRect(
-    player.pos.x * scale,
-    player.pos.y * scale,
+    (player.pos.x - this.viewport.left) * scale,
+    (player.pos.y - this.viewport.top) * scale,
     player.size.x * scale,
     player.size.y * scale
   );
@@ -238,10 +238,9 @@ let canv = new CanvasDisplay(document.body, level);
 //console.log(canv);
 
 animate((deltaTime) => {
- 
   canv.clearDisplay();
   canv.drawBackground(level);
-  canv.updateViewport(deltaTime, level);
-  level.player = level.player.update(deltaTime, level, arrowKeys);
   canv.drawPlayer(level.player);
+  canv.updateViewport(deltaTime, level);
+  level.player = level.player.update(deltaTime, level, arrowKeys, canv.viewport);
 });
