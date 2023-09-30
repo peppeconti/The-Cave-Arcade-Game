@@ -36,6 +36,14 @@ let Level = class Level {
   }
 };
 
+Level.prototype.touchesBoard = function (pos, size, canvas) {
+  let xStart = Math.floor(pos.x * scale);
+  let yStart = Math.floor(pos.y * scale);
+  let isOutside = xStart < 0 || xStart + size.x * scale > canvas.viewport.width * scale || yStart < 0 || yStart + size.y *scale > canvas.viewport.height * scale;
+  return isOutside;
+
+};
+
 let Vector = class Vector {
   constructor(x, y) {
     this.x = x;
@@ -64,23 +72,29 @@ class Player {
   }
 }
 
-Player.prototype.size = new Vector(0.8, 0.5);
+Player.prototype.size = new Vector(.8, 0.5);
 
-var playerSpeed = 7;
+var playerSpeed = 6;
 
-Player.prototype.update = function (time, keys) {
+Player.prototype.update = function (time, level, keys, canvas) {
   let pos = this.pos;
   let xSpeed = 0;
   if (keys.ArrowLeft) xSpeed -= time * playerSpeed;
   if (keys.ArrowRight) xSpeed += time * playerSpeed;
   let movedX = pos.plus(new Vector(xSpeed, 0));
-  pos = movedX;
+
+  if (level.touchesBoard(movedX, this.size, canvas)) {
+    pos = pos;
+  } else pos = movedX;
 
   let ySpeed = 0;
   if (keys.ArrowUp) ySpeed -= time * playerSpeed;
   if (keys.ArrowDown) ySpeed += time * playerSpeed;
   let movedY = pos.plus(new Vector(0, ySpeed));
-  pos = movedY;
+
+  if (level.touchesBoard(movedY, this.size, canvas)) {
+    pos = pos;
+  } else pos = movedY;
 
   this.pos = pos;
 };
@@ -149,7 +163,9 @@ CanvasDisplay.prototype.clearDisplay = function () {
 
 let level = new Level(LEVELS[0]);
 
-console.log(level.player);
+//console.log(level.height * scale);
+
+//console.log(level.player);
 
 function animate(deltaTimeFunc) {
   let lastTime = 0;
@@ -169,8 +185,5 @@ let canv = new CanvasDisplay(document.body, level);
 animate((deltaTime) => {
   canv.clearDisplay();
   canv.drawPlayer(level.player);
-  level.player.update(
-    deltaTime,
-    arrowKeys
-  );
+  level.player.update(deltaTime, level, arrowKeys, canv);
 });
