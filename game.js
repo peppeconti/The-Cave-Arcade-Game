@@ -1,6 +1,7 @@
 const LEVELS = [
   `
 ..............||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||..........
+..............||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||..........
 ..............|||||||||||||||||||||||!!!!|||||||||||||||||||||||||||||||||||||||||||||||||||..........
 ..............|||||||||||||||||||||||||||||||||||.......||||||..................||||||||||||..........
 ..................|||||||||..........||||||.......||..|||||||||..|||||||....||||||||...|||||..........
@@ -8,10 +9,11 @@ const LEVELS = [
 ..................|...............||...||......|........||||||..||||||||||......||||....||||..........
 ..............|............|........|....|.....||..|.................|||||.........|..||||||..........
 ..............|........||||||||||||||....|.....|..||||||||||||.......|||||......|.....||||||..........
+..............||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||..........
 ..............||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||..........`,
 ];
 
-let scale = 40;
+let scale = 35;
 
 let Level = class Level {
   constructor(plan) {
@@ -39,9 +41,12 @@ let Level = class Level {
 Level.prototype.touchesBoard = function (pos, size, canvas) {
   let xStart = Math.floor(pos.x * scale);
   let yStart = Math.floor(pos.y * scale);
-  let isOutside = xStart < 0 || xStart + size.x * scale > canvas.viewport.width * scale || yStart < 0 || yStart + size.y *scale > canvas.viewport.height * scale;
+  let isOutside =
+    xStart < 0 ||
+    xStart + size.x * scale > canvas.viewport.width * scale ||
+    yStart < 0 ||
+    yStart + size.y * scale > canvas.viewport.height * scale;
   return isOutside;
-
 };
 
 let Vector = class Vector {
@@ -72,9 +77,9 @@ class Player {
   }
 }
 
-Player.prototype.size = new Vector(.8, 0.5);
+Player.prototype.size = new Vector(0.8, 0.5);
 
-var playerSpeed = 6;
+var playerSpeed = 8;
 
 Player.prototype.update = function (time, level, keys, canvas) {
   let pos = this.pos;
@@ -130,7 +135,7 @@ class CanvasDisplay {
   constructor(parent, level) {
     this.canvas = document.createElement("canvas");
     this.canvas.width = Math.min(600, level.width * scale);
-    this.canvas.height = Math.min(450, level.height * scale);
+    this.canvas.height = level.height * scale;
     parent.appendChild(this.canvas);
     this.cx = this.canvas.getContext("2d");
 

@@ -3,7 +3,8 @@ body {
     align-items: center;
     justify-content: center;
     height: 100vh;
-    box-sizing: content-box;
+    box-sizing: border-box;
+    overflow: hidden;
 }
 
 canvas {
