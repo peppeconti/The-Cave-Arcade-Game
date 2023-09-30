@@ -36,7 +36,7 @@ let Level = class Level {
   }
 };
 
-Level.prototype.touches = function (pos, size, type, viewport) {
+/*Level.prototype.touches = function (pos, size, type, viewport) {
   let xStart = Math.floor(pos.x);
   let xEnd = Math.ceil(pos.x + size.x);
   let yStart = Math.floor(pos.y);
@@ -50,7 +50,7 @@ Level.prototype.touches = function (pos, size, type, viewport) {
     }
   }
   return false;
-};
+};*/
 
 let Vector = class Vector {
   constructor(x, y) {
