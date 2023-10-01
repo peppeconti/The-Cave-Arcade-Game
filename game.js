@@ -89,7 +89,7 @@ Player.prototype.update = function (time, level, keys, canvas) {
   let movedX = pos.plus(new Vector(xSpeed, 0));
 
   if (level.touchesBoard(movedX, this.size, canvas)) {
-    pos = pos;
+    keys.ArrowLeft ? pos.x = 0 : pos.x = 17;
   } else pos = movedX;
 
   let ySpeed = 0;
