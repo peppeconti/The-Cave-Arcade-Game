@@ -2,6 +2,7 @@ const LEVELS = [
   `
 ..............||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||..........
 ..............||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||..........
+..............||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||..........
 ..............|||||||||||||||||||||||!!!!|||||||||||||||||||||||||||||||||||||||||||||||||||..........
 ..............|||||||||||||||||||||||||||||||||||.......||||||..................||||||||||||..........
 ..................|||||||||..........||||||.......||..|||||||||..|||||||....||||||||...|||||..........
@@ -9,6 +10,7 @@ const LEVELS = [
 ..................|...............||...||......|........||||||..||||||||||......||||....||||..........
 ..............|............|........|....|.....||..|.................|||||.........|..||||||..........
 ..............|........||||||||||||||....|.....|..||||||||||||.......|||||......|.....||||||..........
+..............||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||..........
 ..............||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||..........
 ..............||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||..........`,
 ];
@@ -38,17 +40,6 @@ let Level = class Level {
   }
 };
 
-Level.prototype.touchesBoard = function (pos, size, canvas) {
-  let xStart = Math.floor(pos.x * scale);
-  let yStart = Math.floor(pos.y * scale);
-  let isOutside =
-    xStart < 0 ||
-    xStart + size.x * scale > canvas.viewport.width * scale ||
-    yStart < 0 ||
-    yStart + size.y * scale > canvas.viewport.height * scale;
-  return isOutside;
-};
-
 let Vector = class Vector {
   constructor(x, y) {
     this.x = x;
@@ -66,6 +57,9 @@ class Player {
   constructor(pos, speed) {
     this.pos = pos;
     this.speed = speed;
+    this.vel = new Vector(0, 0);
+    this.acc = new Vector(0, 0);
+    this.acceleration = 0.75;
   }
 
   get type() {
@@ -79,29 +73,30 @@ class Player {
 
 Player.prototype.size = new Vector(0.8, 0.5);
 
-var playerSpeed = 8;
+let friction = 0.07;
 
-Player.prototype.update = function (time, level, keys, canvas) {
-  let pos = this.pos;
-  let xSpeed = 0;
-  if (keys.ArrowLeft) xSpeed -= time * playerSpeed;
-  if (keys.ArrowRight) xSpeed += time * playerSpeed;
-  let movedX = pos.plus(new Vector(xSpeed, 0));
-
-  if (level.touchesBoard(movedX, this.size, canvas)) {
-    keys.ArrowLeft ? pos.x = 0 : pos.x = 17;
-  } else pos = movedX;
-
-  let ySpeed = 0;
-  if (keys.ArrowUp) ySpeed -= time * playerSpeed;
-  if (keys.ArrowDown) ySpeed += time * playerSpeed;
-  let movedY = pos.plus(new Vector(0, ySpeed));
-
-  if (level.touchesBoard(movedY, this.size, canvas)) {
-    pos = pos;
-  } else pos = movedY;
-
-  this.pos = pos;
+Player.prototype.update = function (time, keys) {
+  if (keys.ArrowRight) {
+    this.acc.x = this.acceleration;
+  }
+  if (keys.ArrowLeft) {
+    this.acc.x = -this.acceleration;
+  }
+  if (keys.ArrowDown) {
+    this.acc.y = this.acceleration;
+  }
+  if (keys.ArrowUp) {
+    this.acc.y = -this.acceleration;
+  }
+  if (!keys.ArrowRight && !keys.ArrowLeft) {
+    this.acc.x = 0;
+  }
+  if (!keys.ArrowDown && !keys.ArrowUp) {
+    this.acc.y = 0;
+  }
+  this.vel = this.vel.plus(this.acc.times(time));
+  this.vel = this.vel.times(1 - friction);
+  this.pos = this.pos.plus(this.vel);
 };
 
 function trackKeys(keys) {
@@ -134,7 +129,7 @@ const levelMap = {
 class CanvasDisplay {
   constructor(parent, level) {
     this.canvas = document.createElement("canvas");
-    this.canvas.width = Math.min(600, level.width * scale);
+    this.canvas.width = Math.min(700, level.width * scale);
     this.canvas.height = level.height * scale;
     parent.appendChild(this.canvas);
     this.cx = this.canvas.getContext("2d");
@@ -190,5 +185,5 @@ let canv = new CanvasDisplay(document.body, level);
 animate((deltaTime) => {
   canv.clearDisplay();
   canv.drawPlayer(level.player);
-  level.player.update(deltaTime, level, arrowKeys, canv);
+  level.player.update(deltaTime, arrowKeys);
 });
