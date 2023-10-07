@@ -70,7 +70,7 @@ let Vector = class Vector {
   drawVec(start_x, start_y, n, color, ctx) {
     ctx.beginPath();
     ctx.moveTo(start_x, start_y);
-    ctx.lineTo(start_x + this.x * n, start_y + this.y * n);
+    ctx.lineTo(start_x + (this.x - 14) * n, start_y + (this.y - 8.75) * n);
     ctx.strokeStyle = color;
     ctx.stroke();
     ctx.closePath();
@@ -108,6 +108,7 @@ class Player {
     this.vel = new Vector(0, 0);
     this.acc = new Vector(0, 0);
     this.acceleration = 0.75;
+    this.center = this.pos.add(this.size.mult(0.5)).mult(scale);
   }
 
   get type() {
@@ -145,6 +146,7 @@ Player.prototype.update = function (time, keys) {
   this.vel = this.vel.add(this.acc.mult(time));
   this.vel = this.vel.mult(1 - friction);
   this.pos = this.pos.add(this.vel);
+  this.center = this.pos.add(this.size.mult(0.5)).mult(scale);
 };
 
 function trackKeys(keys) {
@@ -176,12 +178,13 @@ const levelMap = {
 
 //returns with the closest point on a line segment to a given point
 function closestPointBW(b1, w1) {
-  let ballToWallStart = w1.start.subtr(b1.pos.mult(scale));
+  let ballToWallStart = w1.start.subtr(b1.center);
+  //console.log(ballToWallStart.mag());
   if (Vector.dot(w1.wallUnit().mult(scale), ballToWallStart) > 0) {
     return w1.start;
   }
 
-  let wallEndToBall = b1.pos.mult(scale).subtr(w1.end);
+  let wallEndToBall = b1.center.subtr(w1.end);
   if (Vector.dot(w1.wallUnit().mult(scale), wallEndToBall) > 0) {
     return w1.end;
   }
@@ -193,8 +196,10 @@ function closestPointBW(b1, w1) {
 
 //collision detection between ball and wall
 function coll_det_bw(b1, w1) {
-  let ballToClosest = closestPointBW(b1, w1).subtr(b1.pos.add(b1.size).mult(scale));
-  console.log(ballToClosest.mag());
+  let ballToClosest = closestPointBW(b1, w1).subtr(
+    b1.pos.subtr(b1.size).mult(scale)
+  );
+  //console.log(ballToClosest.mag());
   if (ballToClosest.mag() <= 2) {
     return true;
   }
@@ -222,8 +227,15 @@ class CanvasDisplay {
 }
 
 CanvasDisplay.prototype.drawPlayer = function (player) {
-  this.cx.fillStyle = "blue";
+  this.cx.strokeStyle = "red";
+
   this.cx.fillRect(
+    player.pos.x * scale,
+    player.pos.y * scale,
+    player.size.x * scale,
+    player.size.y * scale
+  );
+  this.cx.strokeRect(
     player.pos.x * scale,
     player.pos.y * scale,
     player.size.x * scale,
@@ -266,28 +278,27 @@ let edge = new Wall(
 animate((deltaTime) => {
   canv.clearDisplay();
   canv.drawPlayer(level.player);
+  //console.log(level.player.center.x - level.player.pos.mult(scale).x);
+  //console.log(level.player.center.y - level.player.pos.mult(scale).y);
+  //console.log(level.player.pos.mult(scale));
+  //console.log(Wall1.start);
+  //console.log(level.player.center.x);
+  //console.log((level.player.pos.x + level.player.size.x) * scale - level.player.center.x);
+  //console.log((level.player.pos.y + level.player.size.y) * scale - level.player.center.y);
+  let ff = new Vector((level.player.pos.x + level.player.size.x) * scale - level.player.center.x, (level.player.pos.y + level.player.size.y) * scale - level.player.center.y);
+  let dd = Vector.dot(ff, closestPointBW(level.player, Wall1))
+  //console.log(dd),
+  console.log(closestPointBW(level.player, Wall1))
   Wall1.drawWall(canv.cx);
   closestPointBW(level.player, Wall1)
     .subtr(level.player.pos.mult(scale))
-    .drawVec(
-      (level.player.pos.x + level.player.size.x) * scale - level.player.size.x*scale/2,
-      ((level.player.pos.y + level.player.size.y) * scale - level.player.size.y*scale/2 ),
-      1,
-      "red",
-      canv.cx
-    );
-  closestPointBW(level.player, edge)
+    .drawVec(level.player.center.x, level.player.center.y, 1, "red", canv.cx);
+  /*closestPointBW(level.player, edge)
     .subtr(level.player.pos.mult(scale))
-    .drawVec(
-      (level.player.pos.x + level.player.size.x) * scale - level.player.size.x*scale/2,
-      ((level.player.pos.y + level.player.size.y) * scale - level.player.size.y*scale/2 ),
-      1,
-      "red",
-      canv.cx
-    );
+    .drawVec(level.player.center.x, level.player.center.y, 1, "red", canv.cx);*/
   level.player.update(deltaTime, arrowKeys);
   //coll_det_bw(level.player, Wall1)
-  if (coll_det_bw(level.player, edge)) {
+  /*if (coll_det_bw(level.player, edge)) {
     canv.cx.fillText("collision", 100, 100);
-  }
+  }*/
 });
