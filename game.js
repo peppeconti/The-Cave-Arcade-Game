@@ -270,8 +270,8 @@ animate((deltaTime) => {
   closestPointBW(level.player, Wall1)
     .subtr(level.player.pos.mult(scale))
     .drawVec(
-      level.player.pos.x * scale,
-      level.player.pos.y * scale,
+      (level.player.pos.x + level.player.size.x) * scale - level.player.size.x*scale/2,
+      ((level.player.pos.y + level.player.size.y) * scale - level.player.size.y*scale/2 ),
       1,
       "red",
       canv.cx
@@ -279,8 +279,8 @@ animate((deltaTime) => {
   closestPointBW(level.player, edge)
     .subtr(level.player.pos.mult(scale))
     .drawVec(
-      (level.player.pos.x + level.player.size.x) * scale,
-      ((level.player.pos.y + level.player.size.y) * (scale/2)),
+      (level.player.pos.x + level.player.size.x) * scale - level.player.size.x*scale/2,
+      ((level.player.pos.y + level.player.size.y) * scale - level.player.size.y*scale/2 ),
       1,
       "red",
       canv.cx
