@@ -16,6 +16,7 @@ const LEVELS = [
 ];
 
 let scale = 35;
+let game_over = false;
 
 let Level = class Level {
   constructor(plan) {
@@ -80,8 +81,10 @@ class Rock {
   }
 }
 
-Rock.prototype.update = function (time) {
+Rock.prototype.update = function (time, player) {
   this.pos.x = this.pos.x + time * this.vel;
+
+  if (overlap(this, player)) game_over = true;
 
   //this.pos.x = 600/scale;
 };
@@ -101,13 +104,13 @@ class Player {
   }
 
   static create(pos) {
-    return new Player(pos.add(new Vector(0, 0.25)));
+    return new Player(pos.add(new Vector(0, 0.2)));
   }
 }
 
-Player.prototype.size = new Vector(0.8, 0.5);
+Player.prototype.size = new Vector(0.5, 0.4);
 
-let friction = 0.07;
+let friction = .1;
 
 Player.prototype.update = function (time, keys, display) {
   if (keys.ArrowRight) {
@@ -138,8 +141,11 @@ Player.prototype.update = function (time, keys, display) {
 
   if (this.pos.y < 0) this.pos.y = 0;
 
-  if ((level.player.pos.y + level.player.size.y) * scale > display.canvas.height)
-  level.player.pos.y = display.canvas.height / scale - level.player.size.y
+  if (
+    (level.player.pos.y + level.player.size.y) * scale >
+    display.canvas.height
+  )
+    level.player.pos.y = display.canvas.height / scale - level.player.size.y;
 
   //this.pos.x = 600/scale;
 };
@@ -212,21 +218,16 @@ CanvasDisplay.prototype.drawPlayer = function (player) {
 };
 
 CanvasDisplay.prototype.drawRocks = function (rocks) {
-
   this.cx.fillStyle = "red";
 
-  rocks.forEach( e => {
-
+  rocks.forEach((e) => {
     this.cx.fillRect(
       e.pos.x * scale,
       e.pos.y * scale,
       e.size.x * scale,
       e.size.y * scale
     );
-
-  })
-
-  
+  });
 };
 
 CanvasDisplay.prototype.clearDisplay = function () {
@@ -240,6 +241,15 @@ console.log(level.player);
 //console.log(level.height * scale);
 
 //console.log(level.player);
+
+function overlap(actor1, actor2) {
+  return (
+    actor1.pos.x + actor1.size.x > actor2.pos.x &&
+    actor1.pos.x < actor2.pos.x + actor2.size.x &&
+    actor1.pos.y + actor1.size.y > actor2.pos.y &&
+    actor1.pos.y < actor2.pos.y + actor2.size.y
+  );
+}
 
 function animate(deltaTimeFunc) {
   let lastTime = 0;
@@ -257,10 +267,15 @@ function animate(deltaTimeFunc) {
 let display = new CanvasDisplay(document.body, level);
 
 animate((deltaTime) => {
-  display.clearDisplay();
-  display.drawRocks(level.rocks);
-  display.drawPlayer(level.player);
-  level.player.update(deltaTime, arrowKeys, display);
-  level.rocks.forEach(e => e.update(deltaTime));
-  //canv.cx.fillText((level.player.pos.x + level.player.size.x) * scale, 20, 20);
+  if (!game_over) {
+    display.clearDisplay();
+    display.drawRocks(level.rocks);
+    display.drawPlayer(level.player);
+    level.player.update(deltaTime, arrowKeys, display);
+    level.rocks.forEach((e) => e.update(deltaTime, level.player));
+  }
+  if (game_over) {
+    display.cx.fillStyle= "white";
+    display.cx.fillText("GAME OVER", 20, 20);
+  }
 });
