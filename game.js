@@ -4,7 +4,7 @@ const LEVELS = [
 ..............||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||..........
 ..............||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||..........
 ..............|||||||||||||||||||||||!!!!|||||||||||||||||||||||||||||||||||||||||||||||||||..........
-..............|||||||||||||||||||||||||||||||||||.......||||||..................||||||||||||..........
+..............||||||||||||||||||||||||||||||||||||||||||||||||..................||||||||||||..........
 ..................|||||||||..........||||||.......||..|||||||||..|||||||....||||||||...|||||..........
 .@................|||||||.....||||........|....|..|....|||||||...|||||||||......||||............+.....
 ..................|...............||...||......|........||||||..||||||||||......||||....||||..........
@@ -26,13 +26,19 @@ let Level = class Level {
     this.height = rows.length;
     this.width = rows[0].length;
     this.player;
+    this.rocks = [];
 
     this.rows = rows.map((row, y) => {
       return row.map((ch, x) => {
         let type = levelMap[ch];
         if (typeof type === "string") return type;
         if (typeof type === "function") {
-          this.player = type.create(new Vector(x, y), 0);
+          if (type.type() === "player") {
+            this.player = type.create(new Vector(x, y), 0);
+          }
+          if (type.type() === "rock") {
+            this.rocks.push(type.create(new Vector(x, y)));
+          }
           return "empty";
         }
       });
@@ -59,6 +65,29 @@ let Vector = class Vector {
   }
 };
 
+class Rock {
+  constructor(pos) {
+    this.pos = pos;
+    this.vel = -1;
+  }
+
+  static type() {
+    return "rock";
+  }
+
+  static create(pos) {
+    return new Rock(new Vector(pos.x, pos.y));
+  }
+}
+
+Rock.prototype.update = function (time) {
+  this.pos.x = this.pos.x + time * this.vel;
+
+  //this.pos.x = 600/scale;
+};
+
+Rock.prototype.size = new Vector(1, 1);
+
 class Player {
   constructor(pos) {
     this.pos = pos;
@@ -67,7 +96,7 @@ class Player {
     this.acceleration = 0.75;
   }
 
-  get type() {
+  static type() {
     return "player";
   }
 
@@ -137,7 +166,7 @@ const arrowKeys = trackKeys([
 
 const levelMap = {
   ".": "empty",
-  "|": "rock",
+  "|": Rock,
   "@": Player,
   "+": "goal",
 };
@@ -182,12 +211,32 @@ CanvasDisplay.prototype.drawPlayer = function (player) {
   );
 };
 
+CanvasDisplay.prototype.drawRocks = function (rocks) {
+
+  this.cx.fillStyle = "red";
+
+  rocks.forEach( e => {
+
+    this.cx.fillRect(
+      e.pos.x * scale,
+      e.pos.y * scale,
+      e.size.x * scale,
+      e.size.y * scale
+    );
+
+  })
+
+  
+};
+
 CanvasDisplay.prototype.clearDisplay = function () {
   this.cx.clearRect(0, 0, this.canvas.width, this.canvas.height);
 };
 
 let level = new Level(LEVELS[0]);
 
+console.log(level.rocks);
+console.log(level.player);
 //console.log(level.height * scale);
 
 //console.log(level.player);
@@ -209,7 +258,9 @@ let display = new CanvasDisplay(document.body, level);
 
 animate((deltaTime) => {
   display.clearDisplay();
+  display.drawRocks(level.rocks);
   display.drawPlayer(level.player);
   level.player.update(deltaTime, arrowKeys, display);
+  level.rocks.forEach(e => e.update(deltaTime));
   //canv.cx.fillText((level.player.pos.x + level.player.size.x) * scale, 20, 20);
 });
