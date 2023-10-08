@@ -16,7 +16,6 @@ const LEVELS = [
 ];
 
 let scale = 35;
-//const WALLS = [];
 
 let Level = class Level {
   constructor(plan) {
