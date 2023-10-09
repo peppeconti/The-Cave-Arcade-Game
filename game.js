@@ -16,7 +16,7 @@ const LEVELS = [
 ];
 
 let scale = 35;
-let end = 1 - (1/60*58);
+let end = 1 - (1 / 60) * 58;
 let game_over = false;
 let game_won = false;
 
@@ -31,7 +31,7 @@ let Level = class Level {
     this.player;
     this.goal;
     this.rocks = [];
-    this.fragments =[];
+    this.fragments = [];
 
     this.rows = rows.map((row, y) => {
       return row.map((ch, x) => {
@@ -51,10 +51,33 @@ let Level = class Level {
         }
       });
     });
-    this.fragments.push(Fragment.create(new Vector(this.player.pos.x, this.player.pos.y)))
-    this.fragments.push(Fragment.create(new Vector(this.player.pos.x + .4, this.player.pos.y + .3)))
-    this.fragments.push(Fragment.create(new Vector(this.player.pos.x, this.player.pos.y + .3)))
-    this.fragments.push(Fragment.create(new Vector(this.player.pos.x + .4, this.player.pos.y)))
+    this.fragments.push(
+      Fragment.create(new Vector(this.player.pos.x, this.player.pos.y))
+    );
+    this.fragments.push(
+      Fragment.create(
+        new Vector(
+          this.player.pos.x + this.player.size.x / 2,
+          this.player.pos.y + this.player.size.y / 2
+        )
+      )
+    );
+    this.fragments.push(
+      Fragment.create(
+        new Vector(
+          this.player.pos.x,
+          this.player.pos.y + this.player.size.y / 2
+        )
+      )
+    );
+    this.fragments.push(
+      Fragment.create(
+        new Vector(
+          this.player.pos.x + this.player.size.x / 2,
+          this.player.pos.y
+        )
+      )
+    );
   }
 };
 
@@ -81,11 +104,16 @@ class Fragment {
   constructor(pos) {
     this.pos = pos;
   }
- 
+
   static create(pos) {
     return new Fragment(pos.add(new Vector(0, 0)));
   }
 }
+
+Fragment.prototype.update = function (time, directionX, directionY) {
+  this.pos.x += time * directionX;
+  this.pos.y += time * directionY;
+};
 
 Fragment.prototype.size = new Vector(0.4, 0.3);
 
@@ -114,7 +142,7 @@ Goal.prototype.update = function (time, level) {
   if (overlap(this, level.player)) {
     game_won = true;
     end -= time;
-  };
+  }
 };
 
 Goal.prototype.size = new Vector(0.5, 0.5);
@@ -144,7 +172,7 @@ Rock.prototype.update = function (time, level) {
   if (overlap(this, level.player)) {
     game_over = true;
     end -= time;
-  };
+  }
 
   //this.pos.x = 600/scale;
 };
@@ -172,7 +200,7 @@ Player.prototype.size = new Vector(0.8, 0.6);
 
 let friction = 0.1;
 
-Player.prototype.update = function (time, keys, display) {
+Player.prototype.update = function (time, keys, display, fragments) {
   if (keys.ArrowRight) {
     this.acc.x = this.acceleration;
   }
@@ -194,20 +222,79 @@ Player.prototype.update = function (time, keys, display) {
   this.vel = this.vel.add(this.acc.mult(time));
   this.vel = this.vel.mult(1 - friction);
   this.pos = this.pos.add(this.vel);
+  fragments.forEach((e) => (e.pos = e.pos.add(this.vel)));
 
-  if (this.pos.x < 0) this.pos.x = 0;
-  if ((level.player.pos.x + level.player.size.x) * scale > display.canvas.width)
-    level.player.pos.x = display.canvas.width / scale - level.player.size.x;
+  if (this.pos.x < 0) {
+    this.pos.x = 0;
+    fragments.forEach((e, i) => {
+      if (i === 0) {
+        e.pos.x = 0;
+      }
+      if (i === 1) {
+        e.pos.x = this.size.x / 2;
+      }
+      if (i === 2) {
+        e.pos.x = 0;
+      }
+      if (i === 3) {
+        e.pos.x = 0 + this.size.x / 2;
+      }
+    });
+  }
+  if ((this.pos.x + this.size.x) * scale > display.canvas.width) {
+    this.pos.x = display.canvas.width / scale - this.size.x;
+    //COMPLETEs
+    fragments.forEach((e, i) => {
+      if (i === 0) {
+        e.pos.x = display.canvas.width / scale - this.size.x;
+      }
+      if (i === 1) {
+        e.pos.x = display.canvas.width / scale - this.size.x/2;
+      }
+      if (i === 2) {
+        e.pos.x = display.canvas.width / scale - this.size.x;
+      }
+      if (i === 3) {
+        e.pos.x = display.canvas.width / scale - this.size.x/2;
+      }
+    });
+  }
 
-  if (this.pos.y < 0) this.pos.y = 0;
+  if (this.pos.y < 0) {
+    this.pos.y = 0;
+    fragments.forEach((e, i) => {
+      if (i === 0) {
+        e.pos.y = 0;
+      }
+      if (i === 1) {
+        e.pos.y = this.size.y / 2;
+      }
+      if (i === 2) {
+        e.pos.y = this.size.y / 2;
+      }
+      if (i === 3) {
+        e.pos.y = 0;
+      }
+    });
+  }
 
-  if (
-    (level.player.pos.y + level.player.size.y) * scale >
-    display.canvas.height
-  )
-    level.player.pos.y = display.canvas.height / scale - level.player.size.y;
-
-  //this.pos.x = 600/scale;
+  if ((this.pos.y + this.size.y) * scale > display.canvas.height) {
+    this.pos.y = display.canvas.height / scale - this.size.y;
+    fragments.forEach((e, i) => {
+      if (i === 0) {
+        e.pos.y = display.canvas.height / scale - this.size.y;
+      }
+      if (i === 1) {
+        e.pos.y = display.canvas.height / scale - this.size.y / 2;
+      }
+      if (i === 2) {
+        e.pos.y = display.canvas.height / scale - this.size.y / 2;
+      }
+      if (i === 3) {
+        e.pos.y = display.canvas.height / scale - this.size.y;
+      }
+    });
+  }
 };
 
 function trackKeys(keys) {
@@ -260,12 +347,12 @@ class Display {
 
 Display.prototype.drawPlayer = function (player) {
   this.cx.fillStyle = "white";
-    this.cx.fillRect(
-      player.pos.x * scale,
-      player.pos.y * scale,
-      player.size.x * scale,
-      player.size.y * scale
-    );
+  this.cx.fillRect(
+    player.pos.x * scale,
+    player.pos.y * scale,
+    player.size.x * scale,
+    player.size.y * scale
+  );
 };
 
 Display.prototype.drawFragments = function (fragments) {
@@ -346,11 +433,10 @@ animate((deltaTime) => {
     display.drawRocks(level.rocks);
     display.drawGoal(level.goal);
     display.drawPlayer(level.player);
-    display.drawFragments(level.fragments);
-    level.player.update(deltaTime, arrowKeys, display);
+    level.player.update(deltaTime, arrowKeys, display, level.fragments);
     level.goal.update(deltaTime, level);
-    //level.rocks.forEach((e) => e.update(deltaTime, level));
-    if (end < 0) game_over = true
+    level.rocks.forEach((e) => e.update(deltaTime, level));
+    if (end < 0) game_over = true;
   }
   if (end < 0) {
     display.clearDisplay();
@@ -359,6 +445,13 @@ animate((deltaTime) => {
     display.drawFragments(level.fragments);
     level.goal.update(deltaTime, level);
     level.rocks.forEach((e) => e.update(deltaTime, level));
+    display.drawFragments(level.fragments);
+    level.fragments.forEach((e, i) => {
+      if (i === 0) e.update(deltaTime, -3, -3, level.player);
+      if (i === 1) e.update(deltaTime, 3, 3, level.player);
+      if (i === 2) e.update(deltaTime, -3, 3, level.player);
+      if (i === 3) e.update(deltaTime, 3, -3, level.player);
+    });
   }
   if (game_over) {
     display.cx.fillStyle = "white";
