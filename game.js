@@ -31,7 +31,6 @@ let Level = class Level {
     this.player;
     this.goal;
     this.rocks = [];
-    this.fragments = [];
 
     this.rows = rows.map((row, y) => {
       return row.map((ch, x) => {
@@ -51,33 +50,6 @@ let Level = class Level {
         }
       });
     });
-    this.fragments.push(
-      Fragment.create(new Vector(this.player.pos.x, this.player.pos.y))
-    );
-    this.fragments.push(
-      Fragment.create(
-        new Vector(
-          this.player.pos.x + this.player.size.x / 2,
-          this.player.pos.y + this.player.size.y / 2
-        )
-      )
-    );
-    this.fragments.push(
-      Fragment.create(
-        new Vector(
-          this.player.pos.x,
-          this.player.pos.y + this.player.size.y / 2
-        )
-      )
-    );
-    this.fragments.push(
-      Fragment.create(
-        new Vector(
-          this.player.pos.x + this.player.size.x / 2,
-          this.player.pos.y
-        )
-      )
-    );
   }
 };
 
@@ -185,6 +157,7 @@ class Player {
     this.vel = new Vector(0, 0);
     this.acc = new Vector(0, 0);
     this.acceleration = 0.8;
+    this.fragments = [];
   }
 
   static type() {
@@ -192,7 +165,35 @@ class Player {
   }
 
   static create(pos) {
-    return new Player(pos.add(new Vector(0, 0.2)));
+    let player = new Player(pos.add(new Vector(0, 0.2)));
+    player.fragments.push(
+      Fragment.create(new Vector(player.pos.x, player.pos.y))
+    );
+    player.fragments.push(
+      Fragment.create(
+        new Vector(
+          player.pos.x + player.size.x / 2,
+          player.pos.y + player.size.y / 2
+        )
+      )
+    );
+    player.fragments.push(
+      Fragment.create(
+        new Vector(
+          player.pos.x,
+          player.pos.y + player.size.y / 2
+        )
+      )
+    );
+    player.fragments.push(
+      Fragment.create(
+        new Vector(
+          player.pos.x + player.size.x / 2,
+          player.pos.y
+        )
+      )
+    );
+    return player;
   }
 }
 
@@ -200,7 +201,7 @@ Player.prototype.size = new Vector(0.8, 0.6);
 
 let friction = 0.1;
 
-Player.prototype.update = function (time, keys, display, fragments) {
+Player.prototype.update = function (time, keys, display) {
   if (keys.ArrowRight) {
     this.acc.x = this.acceleration;
   }
@@ -222,11 +223,11 @@ Player.prototype.update = function (time, keys, display, fragments) {
   this.vel = this.vel.add(this.acc.mult(time));
   this.vel = this.vel.mult(1 - friction);
   this.pos = this.pos.add(this.vel);
-  fragments.forEach((e) => (e.pos = e.pos.add(this.vel)));
+  this.fragments.forEach((e) => (e.pos = e.pos.add(this.vel)));
 
   if (this.pos.x < 0) {
     this.pos.x = 0;
-    fragments.forEach((e, i) => {
+    this.fragments.forEach((e, i) => {
       if (i === 0) {
         e.pos.x = 0;
       }
@@ -243,26 +244,25 @@ Player.prototype.update = function (time, keys, display, fragments) {
   }
   if ((this.pos.x + this.size.x) * scale > display.canvas.width) {
     this.pos.x = display.canvas.width / scale - this.size.x;
-    //COMPLETEs
-    fragments.forEach((e, i) => {
+    this.fragments.forEach((e, i) => {
       if (i === 0) {
         e.pos.x = display.canvas.width / scale - this.size.x;
       }
       if (i === 1) {
-        e.pos.x = display.canvas.width / scale - this.size.x/2;
+        e.pos.x = display.canvas.width / scale - this.size.x / 2;
       }
       if (i === 2) {
         e.pos.x = display.canvas.width / scale - this.size.x;
       }
       if (i === 3) {
-        e.pos.x = display.canvas.width / scale - this.size.x/2;
+        e.pos.x = display.canvas.width / scale - this.size.x / 2;
       }
     });
   }
 
   if (this.pos.y < 0) {
     this.pos.y = 0;
-    fragments.forEach((e, i) => {
+    this.fragments.forEach((e, i) => {
       if (i === 0) {
         e.pos.y = 0;
       }
@@ -280,7 +280,7 @@ Player.prototype.update = function (time, keys, display, fragments) {
 
   if ((this.pos.y + this.size.y) * scale > display.canvas.height) {
     this.pos.y = display.canvas.height / scale - this.size.y;
-    fragments.forEach((e, i) => {
+    this.fragments.forEach((e, i) => {
       if (i === 0) {
         e.pos.y = display.canvas.height / scale - this.size.y;
       }
@@ -433,7 +433,7 @@ animate((deltaTime) => {
     display.drawRocks(level.rocks);
     display.drawGoal(level.goal);
     display.drawPlayer(level.player);
-    level.player.update(deltaTime, arrowKeys, display, level.fragments);
+    level.player.update(deltaTime, arrowKeys, display);
     level.goal.update(deltaTime, level);
     level.rocks.forEach((e) => e.update(deltaTime, level));
     if (end < 0) game_over = true;
@@ -442,15 +442,14 @@ animate((deltaTime) => {
     display.clearDisplay();
     display.drawRocks(level.rocks);
     display.drawGoal(level.goal);
-    display.drawFragments(level.fragments);
+    display.drawFragments(level.player.fragments);
     level.goal.update(deltaTime, level);
     level.rocks.forEach((e) => e.update(deltaTime, level));
-    display.drawFragments(level.fragments);
-    level.fragments.forEach((e, i) => {
-      if (i === 0) e.update(deltaTime, -3, -3, level.player);
-      if (i === 1) e.update(deltaTime, 3, 3, level.player);
-      if (i === 2) e.update(deltaTime, -3, 3, level.player);
-      if (i === 3) e.update(deltaTime, 3, -3, level.player);
+    level.player.fragments.forEach((e, i) => {
+      if (i === 0) e.update(deltaTime, -3, -3);
+      if (i === 1) e.update(deltaTime, 3, 3);
+      if (i === 2) e.update(deltaTime, -3, 3);
+      if (i === 3) e.update(deltaTime, 3, -3);
     });
   }
   if (game_over) {
