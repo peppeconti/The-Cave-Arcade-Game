@@ -6,7 +6,7 @@ const LEVELS = [
 ..............|||||||||||||||||||||||!!!!|||||||||||||||||||||||||||||||||||||||||||||||||||..........
 ..............||||||||||||||||||||||||||||||||||||||||||||||||..................||||||||||||..........
 ..................|||||||||..........||||||.......||..|||||||||..|||||||....||||||||...|||||..........
-.@................|||||||.....||||........|....|..|....|||||||...|||||||||......||||............+.....
+.@................|||||||.....||||........|....|..|....|||||||...|||||||||......||||............+....|
 ..................|...............||...||......|........||||||..||||||||||......||||....||||..........
 ..............|............|........|....|.....||..|.................|||||.........|..||||||..........
 ..............|........||||||||||||||....|.....|..||||||||||||.......|||||......|.....||||||..........
@@ -17,6 +17,7 @@ const LEVELS = [
 
 let scale = 35;
 let game_over = false;
+let game_won = false;
 
 let Level = class Level {
   constructor(plan) {
@@ -27,6 +28,7 @@ let Level = class Level {
     this.height = rows.length;
     this.width = rows[0].length;
     this.player;
+    this.goal;
     this.rocks = [];
 
     this.rows = rows.map((row, y) => {
@@ -36,6 +38,9 @@ let Level = class Level {
         if (typeof type === "function") {
           if (type.type() === "player") {
             this.player = type.create(new Vector(x, y), 0);
+          }
+          if (type.type() === "goal") {
+            this.goal = type.create(new Vector(x, y));
           }
           if (type.type() === "rock") {
             this.rocks.push(type.create(new Vector(x, y)));
@@ -66,9 +71,37 @@ let Vector = class Vector {
   }
 };
 
+class Goal {
+  constructor(pos) {
+    this.pos = pos;
+    this.translation = 0;
+    this.vel = -1;
+  }
+
+  static type() {
+    return "goal";
+  }
+
+  static create(pos) {
+    return new Goal(pos.add(new Vector(.25, .25)));
+  }
+}
+
+Goal.prototype.update = function (time, level) {
+  if (this.translation * scale > -(level.width*scale-700)) {
+    this.pos.x = this.pos.x + time * this.vel;
+    this.translation += time * this.vel;
+  }
+
+  if (overlap(this, level.player)) game_won = true;
+};
+
+Goal.prototype.size = new Vector(.5, .5);
+
 class Rock {
   constructor(pos) {
     this.pos = pos;
+    this.translation = 0;
     this.vel = -1;
   }
 
@@ -81,10 +114,13 @@ class Rock {
   }
 }
 
-Rock.prototype.update = function (time, player) {
-  this.pos.x = this.pos.x + time * this.vel;
+Rock.prototype.update = function (time, level) {
+  if (this.translation * scale > -(level.width*scale-700)) {
+    this.pos.x = this.pos.x + time * this.vel;
+    this.translation += time * this.vel;
+  }
 
-  if (overlap(this, player)) game_over = true;
+  ///if (overlap(this, level.player)) game_over = true;
 
   //this.pos.x = 600/scale;
 };
@@ -96,7 +132,7 @@ class Player {
     this.pos = pos;
     this.vel = new Vector(0, 0);
     this.acc = new Vector(0, 0);
-    this.acceleration = 0.75;
+    this.acceleration = 0.8;
   }
 
   static type() {
@@ -108,9 +144,9 @@ class Player {
   }
 }
 
-Player.prototype.size = new Vector(0.5, 0.4);
+Player.prototype.size = new Vector(0.8, 0.6);
 
-let friction = .1;
+let friction = 0.1;
 
 Player.prototype.update = function (time, keys, display) {
   if (keys.ArrowRight) {
@@ -174,7 +210,7 @@ const levelMap = {
   ".": "empty",
   "|": Rock,
   "@": Player,
-  "+": "goal",
+  "+": Goal,
 };
 
 class Display {
@@ -230,18 +266,21 @@ Display.prototype.drawRocks = function (rocks) {
   });
 };
 
+Display.prototype.drawGoal = function (goal) {
+  this.cx.fillStyle = "green";
+    this.cx.fillRect(
+      goal.pos.x * scale,
+      goal.pos.y * scale,
+      goal.size.x * scale,
+      goal.size.y * scale
+    );
+};
+
 Display.prototype.clearDisplay = function () {
   this.cx.clearRect(0, 0, this.canvas.width, this.canvas.height);
 };
 
 let level = new Level(LEVELS[0]);
-
-//console.log(level.rocks);
-//console.log(level.player);
-//console.log(level.height * scale);
-console.log(level.width * scale);
-
-//console.log(level.player);
 
 function overlap(actor1, actor2) {
   return (
@@ -267,16 +306,29 @@ function animate(deltaTimeFunc) {
 
 let display = new Display(document.body, level);
 
+//level.rocks.forEach((e) => console.log(e.pos.x * scale));
+//console.log(level.player);
+//console.log(level.height * scale);
+//console.log(level.width * scale);
+console.log(level.goal);
+
 animate((deltaTime) => {
-  if (!game_over) {
+  if (!game_over && !game_won) {
     display.clearDisplay();
     display.drawRocks(level.rocks);
     display.drawPlayer(level.player);
+    display.drawGoal(level.goal);
     level.player.update(deltaTime, arrowKeys, display);
-    level.rocks.forEach((e) => e.update(deltaTime, level.player));
+    level.goal.update(deltaTime, level);
+    level.rocks.forEach((e) => e.update(deltaTime, level));
+    //console.log(level.rocks[0].translation*scale, );
   }
   if (game_over) {
-    display.cx.fillStyle= "white";
+    display.cx.fillStyle = "white";
     display.cx.fillText("GAME OVER", 20, 20);
+  }
+  if (game_won) {
+    display.cx.fillStyle = "white";
+    display.cx.fillText("YO WON!", 20, 20);
   }
 });
