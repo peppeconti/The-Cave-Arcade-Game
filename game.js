@@ -5,10 +5,10 @@ const LEVELS = [
 ..............||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||..........
 ..............|||||||||||||||||||||||!!!!|||||||||||||||||||||||||||||||||||||||||||||||||||..........
 ..............||||||||||||||||||||||||||||||||||||||||||||||||..................||||||||||||..........
-..................|||||||||..........||||||.......||..|||||||||..|||||||....||||||||...|||||..........
-.@................|||||||.....||||........|....|..|....|||||||...|||||||||......||||............+....|
-..................|...............||...||......|........||||||..||||||||||......||||....||||..........
-..............|............|........|....|.....||..|.................|||||.........|..||||||..........
+..................||||||||...........||||||.......||..|||||||||....|||||.......|||||...|||||..........
+.@................|||||||.................|.......|....|||||||.....|||||||......||||..............+...
+..................|...............|................................|||||||..............||||..........
+..............|............|........|..........|.....................|||||............||||||..........
 ..............|........||||||||||||||....|.....|..||||||||||||.......|||||......|.....||||||..........
 ..............||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||..........
 ..............||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||..........
@@ -16,6 +16,7 @@ const LEVELS = [
 ];
 
 let scale = 35;
+let end = 1 - (1/60*58);
 let game_over = false;
 let game_won = false;
 
@@ -30,6 +31,7 @@ let Level = class Level {
     this.player;
     this.goal;
     this.rocks = [];
+    this.fragments =[];
 
     this.rows = rows.map((row, y) => {
       return row.map((ch, x) => {
@@ -49,6 +51,10 @@ let Level = class Level {
         }
       });
     });
+    this.fragments.push(Fragment.create(new Vector(this.player.pos.x, this.player.pos.y)))
+    this.fragments.push(Fragment.create(new Vector(this.player.pos.x + .4, this.player.pos.y + .3)))
+    this.fragments.push(Fragment.create(new Vector(this.player.pos.x, this.player.pos.y + .3)))
+    this.fragments.push(Fragment.create(new Vector(this.player.pos.x + .4, this.player.pos.y)))
   }
 };
 
@@ -71,6 +77,18 @@ let Vector = class Vector {
   }
 };
 
+class Fragment {
+  constructor(pos) {
+    this.pos = pos;
+  }
+ 
+  static create(pos) {
+    return new Fragment(pos.add(new Vector(0, 0)));
+  }
+}
+
+Fragment.prototype.size = new Vector(0.4, 0.3);
+
 class Goal {
   constructor(pos) {
     this.pos = pos;
@@ -83,20 +101,23 @@ class Goal {
   }
 
   static create(pos) {
-    return new Goal(pos.add(new Vector(.25, .25)));
+    return new Goal(pos.add(new Vector(0.25, 0.25)));
   }
 }
 
 Goal.prototype.update = function (time, level) {
-  if (this.translation * scale > -(level.width*scale-700)) {
+  if (this.translation * scale > -(level.width * scale - 700)) {
     this.pos.x = this.pos.x + time * this.vel;
     this.translation += time * this.vel;
   }
 
-  if (overlap(this, level.player)) game_won = true;
+  if (overlap(this, level.player)) {
+    game_won = true;
+    end -= time;
+  };
 };
 
-Goal.prototype.size = new Vector(.5, .5);
+Goal.prototype.size = new Vector(0.5, 0.5);
 
 class Rock {
   constructor(pos) {
@@ -115,12 +136,15 @@ class Rock {
 }
 
 Rock.prototype.update = function (time, level) {
-  if (this.translation * scale > -(level.width*scale-700)) {
+  if (this.translation * scale > -(level.width * scale - 700)) {
     this.pos.x = this.pos.x + time * this.vel;
     this.translation += time * this.vel;
   }
 
-  ///if (overlap(this, level.player)) game_over = true;
+  if (overlap(this, level.player)) {
+    game_over = true;
+    end -= time;
+  };
 
   //this.pos.x = 600/scale;
 };
@@ -235,22 +259,26 @@ class Display {
 }
 
 Display.prototype.drawPlayer = function (player) {
-  this.cx.strokeStyle = "white";
+  this.cx.fillStyle = "white";
+    this.cx.fillRect(
+      player.pos.x * scale,
+      player.pos.y * scale,
+      player.size.x * scale,
+      player.size.y * scale
+    );
+};
 
+Display.prototype.drawFragments = function (fragments) {
   this.cx.fillStyle = "white";
 
-  this.cx.fillRect(
-    player.pos.x * scale,
-    player.pos.y * scale,
-    player.size.x * scale,
-    player.size.y * scale
-  );
-  this.cx.strokeRect(
-    player.pos.x * scale,
-    player.pos.y * scale,
-    player.size.x * scale,
-    player.size.y * scale
-  );
+  fragments.forEach((e) => {
+    this.cx.fillRect(
+      e.pos.x * scale,
+      e.pos.y * scale,
+      e.size.x * scale,
+      e.size.y * scale
+    );
+  });
 };
 
 Display.prototype.drawRocks = function (rocks) {
@@ -268,12 +296,12 @@ Display.prototype.drawRocks = function (rocks) {
 
 Display.prototype.drawGoal = function (goal) {
   this.cx.fillStyle = "green";
-    this.cx.fillRect(
-      goal.pos.x * scale,
-      goal.pos.y * scale,
-      goal.size.x * scale,
-      goal.size.y * scale
-    );
+  this.cx.fillRect(
+    goal.pos.x * scale,
+    goal.pos.y * scale,
+    goal.size.x * scale,
+    goal.size.y * scale
+  );
 };
 
 Display.prototype.clearDisplay = function () {
@@ -310,18 +338,27 @@ let display = new Display(document.body, level);
 //console.log(level.player);
 //console.log(level.height * scale);
 //console.log(level.width * scale);
-console.log(level.goal);
+console.log(level.fragments);
 
 animate((deltaTime) => {
-  if (!game_over && !game_won) {
+  if (end > 0) {
     display.clearDisplay();
     display.drawRocks(level.rocks);
-    display.drawPlayer(level.player);
     display.drawGoal(level.goal);
+    display.drawPlayer(level.player);
+    display.drawFragments(level.fragments);
     level.player.update(deltaTime, arrowKeys, display);
     level.goal.update(deltaTime, level);
+    //level.rocks.forEach((e) => e.update(deltaTime, level));
+    if (end < 0) game_over = true
+  }
+  if (end < 0) {
+    display.clearDisplay();
+    display.drawRocks(level.rocks);
+    display.drawGoal(level.goal);
+    display.drawFragments(level.fragments);
+    level.goal.update(deltaTime, level);
     level.rocks.forEach((e) => e.update(deltaTime, level));
-    //console.log(level.rocks[0].translation*scale, );
   }
   if (game_over) {
     display.cx.fillStyle = "white";
