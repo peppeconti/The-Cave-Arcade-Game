@@ -89,7 +89,7 @@ Rock.prototype.update = function (time, player) {
   //this.pos.x = 600/scale;
 };
 
-Rock.prototype.size = new Vector(1, 1);
+Rock.prototype.size = new Vector(1.02, 1);
 
 class Player {
   constructor(pos) {
@@ -177,7 +177,7 @@ const levelMap = {
   "+": "goal",
 };
 
-class CanvasDisplay {
+class Display {
   constructor(parent, level) {
     this.canvas = document.createElement("canvas");
     this.canvas.width = Math.min(700, level.width * scale);
@@ -198,7 +198,7 @@ class CanvasDisplay {
   }
 }
 
-CanvasDisplay.prototype.drawPlayer = function (player) {
+Display.prototype.drawPlayer = function (player) {
   this.cx.strokeStyle = "white";
 
   this.cx.fillStyle = "white";
@@ -217,7 +217,7 @@ CanvasDisplay.prototype.drawPlayer = function (player) {
   );
 };
 
-CanvasDisplay.prototype.drawRocks = function (rocks) {
+Display.prototype.drawRocks = function (rocks) {
   this.cx.fillStyle = "red";
 
   rocks.forEach((e) => {
@@ -230,15 +230,16 @@ CanvasDisplay.prototype.drawRocks = function (rocks) {
   });
 };
 
-CanvasDisplay.prototype.clearDisplay = function () {
+Display.prototype.clearDisplay = function () {
   this.cx.clearRect(0, 0, this.canvas.width, this.canvas.height);
 };
 
 let level = new Level(LEVELS[0]);
 
-console.log(level.rocks);
-console.log(level.player);
+//console.log(level.rocks);
+//console.log(level.player);
 //console.log(level.height * scale);
+console.log(level.width * scale);
 
 //console.log(level.player);
 
@@ -264,7 +265,7 @@ function animate(deltaTimeFunc) {
   requestAnimationFrame(frame);
 }
 
-let display = new CanvasDisplay(document.body, level);
+let display = new Display(document.body, level);
 
 animate((deltaTime) => {
   if (!game_over) {

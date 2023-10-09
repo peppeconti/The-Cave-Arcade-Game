@@ -138,7 +138,7 @@ const levelMap = {
   "+": "goal",
 };
 
-class CanvasDisplay {
+class Display {
   constructor(parent, level) {
     this.canvas = document.createElement("canvas");
     this.canvas.width = Math.min(600, level.width * scale);
@@ -162,7 +162,7 @@ class CanvasDisplay {
 let tiles = document.createElement("img");
 tiles.src = "img/tile.png";
 
-CanvasDisplay.prototype.drawBackground = function (level) {
+Display.prototype.drawBackground = function (level) {
   let { left, top, width, height } = this.viewport;
   let xStart = Math.floor(left);
   let xEnd = Math.ceil(left + width);
@@ -191,7 +191,7 @@ CanvasDisplay.prototype.drawBackground = function (level) {
   }
 };
 
-CanvasDisplay.prototype.drawPlayer = function (player) {
+Display.prototype.drawPlayer = function (player) {
   this.cx.fillStyle = "blue";
   this.cx.fillRect(
     (player.pos.x - this.viewport.left) * scale,
@@ -201,11 +201,11 @@ CanvasDisplay.prototype.drawPlayer = function (player) {
   );
 };
 
-CanvasDisplay.prototype.clearDisplay = function () {
+Display.prototype.clearDisplay = function () {
   this.cx.clearRect(0, 0, this.canvas.width, this.canvas.height);
 };
 
-CanvasDisplay.prototype.updateViewport = function (time, level) {
+Display.prototype.updateViewport = function (time, level) {
   let view = this.viewport;
   let speed = 1;
 
@@ -225,7 +225,8 @@ function overlap(actor1, actor2) {
 
 let level = new Level(LEVELS[0]);
 
-console.log(level.player);
+//console.log(level.player);
+
 
 function animate(deltaTimeFunc) {
   let lastTime = 0;
@@ -240,9 +241,7 @@ function animate(deltaTimeFunc) {
   requestAnimationFrame(frame);
 }
 
-let canv = new CanvasDisplay(document.body, level);
-
-//console.log(canv);
+let canv = new Display(document.body, level);
 
 animate((deltaTime) => {
   canv.clearDisplay();
