@@ -19,6 +19,7 @@ let scale = 35;
 let end = 1 - (1 / 60) * 58;
 let game_over = false;
 let game_won = false;
+let audio = new Audio("./audio/game_over.mp3");
 
 let Level = class Level {
   constructor(plan) {
@@ -142,7 +143,10 @@ Rock.prototype.update = function (time, level) {
   }
 
   if (overlap(this, level.player)) {
-    game_over = true;
+    if (!game_over) {
+      audio.play();
+      game_over = !game_over;
+    }
     end -= time;
   }
 
@@ -179,18 +183,12 @@ class Player {
     );
     player.fragments.push(
       Fragment.create(
-        new Vector(
-          player.pos.x,
-          player.pos.y + player.size.y / 2
-        )
+        new Vector(player.pos.x, player.pos.y + player.size.y / 2)
       )
     );
     player.fragments.push(
       Fragment.create(
-        new Vector(
-          player.pos.x + player.size.x / 2,
-          player.pos.y
-        )
+        new Vector(player.pos.x + player.size.x / 2, player.pos.y)
       )
     );
     return player;
