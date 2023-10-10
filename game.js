@@ -16,7 +16,7 @@ const LEVELS = [
 ];
 
 let scale = 35;
-let end = 1 - (1 / 60) * 58;
+let end = 1 - (1 / 60) * 59;
 let game_over = false;
 let game_won = false;
 let audio = new Audio("./audio/game_over.mp3");
@@ -76,6 +76,7 @@ let Vector = class Vector {
 class Fragment {
   constructor(pos) {
     this.pos = pos;
+    this.vel = 5;
   }
 
   static create(pos) {
@@ -84,8 +85,8 @@ class Fragment {
 }
 
 Fragment.prototype.update = function (time, directionX, directionY) {
-  this.pos.x += time * directionX;
-  this.pos.y += time * directionY;
+  this.pos.x += time * directionX * this.vel;
+  this.pos.y += time * directionY * this.vel;
 };
 
 Fragment.prototype.size = new Vector(0.4, 0.3);
@@ -444,10 +445,10 @@ animate((deltaTime) => {
     level.goal.update(deltaTime, level);
     level.rocks.forEach((e) => e.update(deltaTime, level));
     level.player.fragments.forEach((e, i) => {
-      if (i === 0) e.update(deltaTime, -3, -3);
-      if (i === 1) e.update(deltaTime, 3, 3);
-      if (i === 2) e.update(deltaTime, -3, 3);
-      if (i === 3) e.update(deltaTime, 3, -3);
+      if (i === 0) e.update(deltaTime, -1, -1);
+      if (i === 1) e.update(deltaTime, 1, 1);
+      if (i === 2) e.update(deltaTime, -1, 1);
+      if (i === 3) e.update(deltaTime, 1, -1);
     });
   }
   if (game_over) {
