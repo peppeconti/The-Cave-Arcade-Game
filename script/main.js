@@ -1,8 +1,28 @@
 import LEVELS from "./game_levels.js";
 import Level from "./level.js";
 import State from "./state.js";
-import Display from "./display.js";
+import DOMDisplay from "./display.js";
 
+
+function trackKeys(keys) {
+  let down = Object.create(null);
+  function track(event) {
+    if (keys.includes(event.key)) {
+      down[event.key] = event.type == "keydown";
+      event.preventDefault();
+    }
+  }
+  window.addEventListener("keydown", track);
+  window.addEventListener("keyup", track);
+  return down;
+}
+
+const arrowKeys = trackKeys([
+  "ArrowLeft",
+  "ArrowRight",
+  "ArrowUp",
+  "ArrowDown",
+]);
 
 function animate(deltaTimeFunc) {
   let lastTime = 0;
@@ -17,12 +37,23 @@ function animate(deltaTimeFunc) {
   requestAnimationFrame(frame);
 }
 
-function runLevel(level, Display) {
-    let display = new Display(document.body, level);
+function runLevel(level) {
+    let display = new DOMDisplay(document.body, level);
     let state = new State(level, "START GAME");
     return new Promise(resolve => {
       animate((deltaTime) => {
-          
+          state.update(deltaTime, arrowKeys);
+          display.syncState(state);
+          return true;
       });
     })
 }
+
+
+async function runGame(plans) {
+  for (let level = 0; level < plans.length;) {
+    let status = await runLevel(new Level(LEVELS[level]));
+  }
+}
+
+runGame(LEVELS, DOMDisplay)

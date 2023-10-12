@@ -1,5 +1,7 @@
 import Vector from "./vector.js";
 
+let scale=35;
+
 let Player = class Player {
   constructor(pos) {
     this.pos = pos;

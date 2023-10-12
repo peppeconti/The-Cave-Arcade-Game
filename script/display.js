@@ -1,3 +1,5 @@
+let scale = 35;
+
 let Display = class Display {
     constructor(parent, level) {
       this.canvas = document.createElement("canvas");
