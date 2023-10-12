@@ -1,16 +1,15 @@
 import LEVELS from "./game_levels.js";
 import Level from "./level.js";
+import State from "./state.js";
+import Display from "./display.js";
 
-let level = new Level(LEVELS[0]);
-
-console.log(level);
 
 function animate(deltaTimeFunc) {
   let lastTime = 0;
   const frame = (timeStamp) => {
     if (lastTime) {
       let deltaTime = Math.min(timeStamp - lastTime, 100) / 1000;
-      deltaTimeFunc(deltaTime);
+      if (deltaTimeFunc(deltaTime) === false) return;
     }
     lastTime = timeStamp;
     requestAnimationFrame(frame);
@@ -18,11 +17,12 @@ function animate(deltaTimeFunc) {
   requestAnimationFrame(frame);
 }
 
-function runLevel(display, level) {
+function runLevel(level, Display) {
     let display = new Display(document.body, level);
-    let state = new State(level, "START GAME")
+    let state = new State(level, "START GAME");
+    return new Promise(resolve => {
+      animate((deltaTime) => {
+          
+      });
+    })
 }
-
-animate((deltaTime) => {
-    
-});

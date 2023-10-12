@@ -7,3 +7,5 @@ let State = class State {
         this.status = status;
     } 
 }
+
+export default State;
