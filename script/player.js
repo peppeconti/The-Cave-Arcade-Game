@@ -61,6 +61,10 @@ Player.prototype.update = function (time, keys, display) {
   if ((this.pos.y + this.size.y) * scale > display.canvas.height) {
     this.pos.y = display.canvas.height / scale - this.size.y;
   }
+
+  let newPos = this.pos;
+
+  return new Player(newPos);
 };
 
 export default Player;
