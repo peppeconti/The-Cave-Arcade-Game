@@ -1,8 +1,10 @@
 import Player from "./player.js";
+import Rock from "./rock.js";
 import Vector from "./vector.js";
 
 const levelMap = {
   ".": "empty",
+  "|": Rock,
   "@": Player,
 };
 

@@ -57,10 +57,26 @@ Display.prototype.syncState = function (state, deltaTime) {
       this.cx.fillText(
         Math.ceil(state.intervall),
         this.canvas.width / 2,
-        (this.canvas.height / 2) + 20
+        (this.canvas.height / 2) + 18
       );
-    } else this.drawPlayer(state.player);
+    } else {
+      this.drawRocks(state.rocks);
+      this.drawPlayer(state.player);
+    }
   }
+};
+
+Display.prototype.drawRocks = function (rocks) {
+  this.cx.fillStyle = "blue";
+
+  rocks.forEach((e) => {
+    this.cx.fillRect(
+      e.pos.x * scale,
+      e.pos.y * scale,
+      e.size.x * scale,
+      e.size.y * scale
+    );
+  });
 };
 
 Display.prototype.drawPlayer = function (player) {
