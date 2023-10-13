@@ -22,8 +22,16 @@ let Display = class Display {
   };
 
   Display.prototype.syncState = function(state) {
-    this.clearDisplay();
-    this.drawPlayer(state.player);
+    if (state.status === "START GAME") {
+      this.cx.fillStyle = "white";
+      this.cx.font = "60px Arial";
+      this.cx.textAlign = "center";
+      this.cx.fillText(state.status, this.canvas.width/2, this.canvas.height/2 + 30);
+    }
+    if (state.status === "PLAYING") {
+      this.clearDisplay();
+      this.drawPlayer(state.player);
+    }
   }
 
   Display.prototype.drawPlayer = function (player) {
