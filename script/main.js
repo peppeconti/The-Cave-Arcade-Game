@@ -6,6 +6,7 @@ import DOMDisplay from "./display.js";
 function trackKeys(keys) {
   let down = Object.create(null);
   function track(event) {
+    console.log(event.key)
     if (keys.includes(event.key)) {
       down[event.key] = event.type == "keydown";
       event.preventDefault();
@@ -21,6 +22,7 @@ const arrowKeys = trackKeys([
   "ArrowRight",
   "ArrowUp",
   "ArrowDown",
+  "Enter"
 ]);
 
 function animate(deltaTimeFunc) {
@@ -38,11 +40,12 @@ function animate(deltaTimeFunc) {
 
 function runLevel(level) {
   let display = new DOMDisplay(document.body, level);
-  let state = new State(level, "START GAME");
+  let state = new State(level, "START GAME", 0);
   return new Promise((resolve) => {
     animate((deltaTime) => {
-      display.syncState(state);
-      state.update(deltaTime, arrowKeys, display);
+      state = state.update(deltaTime, arrowKeys, display);
+      display.syncState(state, deltaTime);
+      //console.log(state.status)
       return true;
     });
   });
