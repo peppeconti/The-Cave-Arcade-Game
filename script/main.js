@@ -1,7 +1,7 @@
 import LEVELS from "./game_levels.js";
 import Level from "./level.js";
 import State from "./state.js";
-import DOMDisplay from "./display.js";
+import Display from "./display.js";
 
 function trackKeys(keys) {
   let down = Object.create(null);
@@ -39,7 +39,7 @@ function animate(deltaTimeFunc) {
 }
 
 function runLevel(level) {
-  let display = new DOMDisplay(document.body, level);
+  let display = new Display(document.body, level);
   let state = new State(level, "START GAME", 0);
   return new Promise((resolve) => {
     animate((deltaTime) => {
@@ -57,4 +57,4 @@ async function runGame(plans) {
   }
 }
 
-runGame(LEVELS, DOMDisplay);
+runGame(LEVELS, Display);
