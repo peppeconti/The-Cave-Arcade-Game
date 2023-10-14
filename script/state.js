@@ -1,5 +1,3 @@
-import Player from "./player.js";
-
 let State = class State {
   constructor(level, status, intervall) {
     this.level = level;

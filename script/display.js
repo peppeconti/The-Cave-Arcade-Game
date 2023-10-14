@@ -35,13 +35,13 @@ Display.prototype.syncState = function (state, deltaTime, level) {
       this.drawCountDown(state.intervall);
       state.intervall -= deltaTime;
     } else {
-      this.updateScreen(deltaTime);
+      this.updateScreen(deltaTime, level);
       this.drawBackGround(level);
       this.drawPlayer(state.player);
     }
   }
   if (state.status === "GAME OVER") {
-    this.updateScreen(deltaTime);
+    this.updateScreen(deltaTime, level);
     this.drawBackGround(level);
     //this.drawPlayer(state.player);
   }
@@ -102,9 +102,11 @@ Display.prototype.drawBackGround = function (level) {
   });
 };
 
-Display.prototype.updateScreen = function (time) {
+Display.prototype.updateScreen = function (time, level) {
   let screen = this.viewport;
-  screen.left -= time * 1;
+  if (screen.left * scale > -(level.width * scale - this.canvas.width)) {
+    screen.left -= time * 1;
+  }
 };
 
 export default Display;
