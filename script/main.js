@@ -6,7 +6,7 @@ import Display from "./display.js";
 function trackKeys(keys) {
   let down = Object.create(null);
   function track(event) {
-    console.log(event.key)
+    //console.log(event.key)
     if (keys.includes(event.key)) {
       down[event.key] = event.type == "keydown";
       event.preventDefault();
@@ -25,7 +25,7 @@ const arrowKeys = trackKeys([
   "Enter"
 ]);
 
-console.log(new Level(LEVELS[0]).walls)
+//console.log(new Level(LEVELS[0]).walls)
 
 function animate(deltaTimeFunc) {
   let lastTime = 0;

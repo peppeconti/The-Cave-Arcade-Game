@@ -40,6 +40,11 @@ Display.prototype.syncState = function (state, deltaTime, level) {
       this.drawPlayer(state.player);
     }
   }
+  if (state.status === "GAME OVER") {
+    this.updateScreen(deltaTime);
+    this.drawBackGround(level);
+    //this.drawPlayer(state.player);
+  }
 };
 
 Display.prototype.drawPlayer = function (player) {
@@ -100,6 +105,6 @@ Display.prototype.drawBackGround = function (level) {
 Display.prototype.updateScreen = function (time) {
   let screen = this.viewport;
   screen.left -= time * 1;
-}
+};
 
 export default Display;
