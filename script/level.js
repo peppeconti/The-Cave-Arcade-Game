@@ -1,10 +1,9 @@
 import Player from "./player.js";
-import Rock from "./rock.js";
 import Vector from "./vector.js";
 
 const levelMap = {
   ".": "empty",
-  "|": Rock,
+  "|": 'wall',
   "@": Player,
 };
 
@@ -30,9 +29,6 @@ let Level = class Level {
           }
           if (type.type() === "goal") {
             this.goal = type.create(new Vector(x, y));
-          }
-          if (type.type() === "rock") {
-            this.rocks.push(type.create(new Vector(x, y)));
           }
           return "empty";
         }

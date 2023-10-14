@@ -10,7 +10,6 @@ let State = class State {
 };
 
 State.prototype.update = function (time, keys, display) {
-  this.rocks.forEach((e) => e.update(time, this.level));
   this.player.update(time, keys, display);
   let newState = new State(this.level, this.status, this.intervall);
   if (keys.Enter && this.status === "START GAME") {
