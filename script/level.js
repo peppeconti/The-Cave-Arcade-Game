@@ -4,6 +4,7 @@ import Vector from "./vector.js";
 const levelMap = {
   ".": "empty",
   "|": "wall",
+  "+": "goal",
   "@": Player,
 };
 
@@ -17,6 +18,7 @@ let Level = class Level {
     this.width = rows[0].length;
     this.player;
     this.walls = [];
+    this.goal = [];
 
     this.rows = rows.map((row, y) => {
       return row.map((ch, x) => {
@@ -24,6 +26,10 @@ let Level = class Level {
         if (typeof type === "string") {
           if (type === "wall") {
             this.walls.push([x, y]);
+            return type;
+          }
+          if (type === "goal") {
+            this.goal.push([x, y]);
             return type;
           }
           return type

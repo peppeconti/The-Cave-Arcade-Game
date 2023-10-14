@@ -5,6 +5,7 @@ let State = class State {
     this.level = level;
     this.player = level.player;
     this.walls = level.walls;
+    this.goal = level.goal;
     this.status = status;
     this.intervall = intervall;
   }
@@ -16,6 +17,9 @@ State.prototype.update = function (deltaTime, keys, display) {
     if (this.player.overlap(this.walls, display.viewport)) {
       audioFiles.shipDestroy.play();
       return new State(this.level, "GAME OVER", 0);
+    };
+    if (this.player.overlap(this.goal, display.viewport)) {
+      return new State(this.level, "YOU WON", 0);
     };
   }
   let newState = new State(this.level, this.status, this.intervall);

@@ -73,6 +73,24 @@ Display.prototype.syncState = function (state, deltaTime, level) {
       this.canvas.height / 2.5 + 25
     );
   }
+  if (state.status === "YOU WON") {
+    this.updateScreen(deltaTime, level);
+    this.drawBackGround(level);
+    this.drawPlayer(state.player);
+    state.intervall += deltaTime;
+    if (state.intervall > 1.25) state.intervall = 0;
+    if (state.intervall > 0 && state.intervall < 0.75) {
+      this.drawPress("PRESS 'ENTER' TO RESTART");
+    }
+    this.cx.fillStyle = "white";
+    this.cx.font = "60px 'Wallpoet'";
+    this.cx.textAlign = "center";
+    this.cx.fillText(
+      "YOU WON",
+      this.canvas.width / 2,
+      this.canvas.height / 2.5 + 25
+    );
+  }
 };
 
 Display.prototype.drawPlayer = function (player) {
@@ -146,6 +164,13 @@ Display.prototype.drawBackGround = function (level) {
       scale
     );
   });
+    this.cx.fillStyle = "red";
+    this.cx.fillRect(
+      (level.goal[0][0] + this.viewport.left) * scale + scale/4,
+      (level.goal[0][1] + this.viewport.top) * scale + scale/4,
+      scale/2,
+      scale/2
+    );
 };
 
 Display.prototype.drawFragments = function (fragments) {
@@ -164,7 +189,7 @@ Display.prototype.drawFragments = function (fragments) {
 Display.prototype.updateScreen = function (time, level) {
   let screen = this.viewport;
   if (screen.left * scale > -(level.width * scale - this.canvas.width)) {
-    screen.left -= time * 15;
+    screen.left -= time * 5;
   }
 };
 
