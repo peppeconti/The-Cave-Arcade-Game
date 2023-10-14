@@ -22,6 +22,7 @@ let Rock = class Rock {
     if (this.translation * scale > -(level.width * scale - 700)) {
       this.pos.x = this.pos.x + time * this.vel;
       this.translation += time * this.vel;
+      console.log(this.translation);
     }
   };
   
