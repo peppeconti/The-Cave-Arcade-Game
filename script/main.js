@@ -25,7 +25,19 @@ const arrowKeys = trackKeys([
   "Enter"
 ]);
 
-//console.log(new Level(LEVELS[0]).walls)
+/*const cc = async () => {
+  let pino = await ciucca();
+  console.log(pino)
+
+}
+
+cc();
+
+function ciucca() {
+  return new Promise(resolve => {
+    resolve(new Level(LEVELS));
+  })
+}*/
 
 function animate(deltaTimeFunc) {
   let lastTime = 0;
@@ -52,10 +64,10 @@ function runLevel(level) {
   });
 }
 
-async function runGame(plans) {
-  for (let level = 0; level < plans.length; ) {
-    let status = await runLevel(new Level(LEVELS[level]));
-  }
+function runGame(plan) {
+  //for (let level = 0; level < plans.length; ) {
+    runLevel(new Level(plan[0]));
+  //}
 }
 
 runGame(LEVELS, Display);
