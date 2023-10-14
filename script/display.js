@@ -27,7 +27,7 @@ Display.prototype.syncState = function (state, deltaTime, level) {
     state.intervall += deltaTime;
     if (state.intervall > 1.25) state.intervall = 0;
     if (state.intervall > 0 && state.intervall < 0.75) {
-      this.drawStarting();
+      this.drawPress("PRESS 'ENTER' TO START");
     }
     this.cx.fillStyle = "white";
     this.cx.font = "60px 'Wallpoet'";
@@ -58,29 +58,60 @@ Display.prototype.syncState = function (state, deltaTime, level) {
   if (state.status === "GAME OVER") {
     this.updateScreen(deltaTime, level);
     this.drawBackGround(level);
-    //this.drawPlayer(state.player);
+    this.drawFragments(state.player.fragments);
+    state.intervall += deltaTime;
+    if (state.intervall > 1.25) state.intervall = 0;
+    if (state.intervall > 0 && state.intervall < 0.75) {
+      this.drawPress("PRESS 'ENTER' TO RESTART");
+    }
+    this.cx.fillStyle = "white";
+    this.cx.font = "60px 'Wallpoet'";
+    this.cx.textAlign = "center";
+    this.cx.fillText(
+      "GAME OVER",
+      this.canvas.width / 2,
+      this.canvas.height / 2.5 + 25
+    );
   }
 };
 
 Display.prototype.drawPlayer = function (player) {
   this.cx.fillStyle = "white";
+  // TOP RIGHT
+  this.cx.fillRect(
+    (player.pos.x + player.size.x / 2) * scale,
+    player.pos.y * scale,
+    (player.size.x / 2) * scale,
+    (player.size.y / 1.9) * scale
+  );
+  // TOP LEFT
   this.cx.fillRect(
     player.pos.x * scale,
     player.pos.y * scale,
-    player.size.x * scale,
-    player.size.y * scale
+    (player.size.x / 1.9) * scale,
+    (player.size.y / 1.9) * scale
+  );
+  // BOTTOM LEFT
+  this.cx.fillRect(
+    player.pos.x * scale,
+    (player.pos.y + player.size.y / 2) * scale,
+    (player.size.x / 1.9) * scale,
+    (player.size.y / 2) * scale
+  );
+  // BOTTOM RIGHT
+  this.cx.fillRect(
+    (player.pos.x + player.size.x / 2) * scale,
+    (player.pos.y + player.size.y / 2) * scale,
+    (player.size.x / 2) * scale,
+    (player.size.y / 2) * scale
   );
 };
 
-Display.prototype.drawStarting = function () {
+Display.prototype.drawPress = function (text) {
   this.cx.fillStyle = "white";
   this.cx.font = "30px 'Wallpoet'";
   this.cx.textAlign = "center";
-  this.cx.fillText(
-    "PRESS 'ENTER' TO START",
-    this.canvas.width / 2,
-    this.canvas.height / 2 + 45
-  );
+  this.cx.fillText(text, this.canvas.width / 2, this.canvas.height / 2 + 45);
 };
 
 Display.prototype.drawCountDown = function (intervall) {
@@ -117,10 +148,23 @@ Display.prototype.drawBackGround = function (level) {
   });
 };
 
+Display.prototype.drawFragments = function (fragments) {
+  this.cx.fillStyle = "white";
+
+  fragments.forEach((e) => {
+    this.cx.fillRect(
+      e.pos.x * scale,
+      e.pos.y * scale,
+      e.size.x * scale,
+      e.size.y * scale
+    );
+  });
+};
+
 Display.prototype.updateScreen = function (time, level) {
   let screen = this.viewport;
   if (screen.left * scale > -(level.width * scale - this.canvas.width)) {
-    screen.left -= time * 1;
+    screen.left -= time * 15;
   }
 };
 
