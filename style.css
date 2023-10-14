@@ -6,11 +6,11 @@ body {
     box-sizing: border-box;
     overflow: hidden;
     background-color: #868686;
-    font-family: 'Wallpoet', cursive;
 }
 
 canvas {
     background-color: #2d2d2d;
+    font-family: 'Wallpoet', cursive;
 }
 
 img {

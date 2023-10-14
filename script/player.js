@@ -1,6 +1,5 @@
 import Vector from "./vector.js";
-
-let scale=35;
+import { scale } from "./game_levels.js";
 
 let Player = class Player {
   constructor(pos) {

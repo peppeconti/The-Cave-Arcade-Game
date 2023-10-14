@@ -10,7 +10,7 @@ let State = class State {
 };
 
 State.prototype.update = function (time, keys, display) {
-  this.player.update(time, keys, display);
+  if (this.status === "PLAYING" && this.intervall < 0) this.player.update(time, keys, display);
   let newState = new State(this.level, this.status, this.intervall);
   if (keys.Enter && this.status === "START GAME") {
     newState = new State(this.level, "PLAYING", 3);

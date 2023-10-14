@@ -1,4 +1,4 @@
-import LEVELS from "./game_levels.js";
+import { LEVELS } from "./game_levels.js";
 import Level from "./level.js";
 import State from "./state.js";
 import Display from "./display.js";
@@ -25,6 +25,8 @@ const arrowKeys = trackKeys([
   "Enter"
 ]);
 
+console.log(new Level(LEVELS[0]).walls)
+
 function animate(deltaTimeFunc) {
   let lastTime = 0;
   const frame = (timeStamp) => {
@@ -44,8 +46,7 @@ function runLevel(level) {
   return new Promise((resolve) => {
     animate((deltaTime) => {
       state = state.update(deltaTime, arrowKeys, display);
-      display.syncState(state, deltaTime);
-      //console.log(state.status)
+      display.syncState(state, deltaTime, level);
       return true;
     });
   });

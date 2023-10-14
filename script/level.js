@@ -3,7 +3,7 @@ import Vector from "./vector.js";
 
 const levelMap = {
   ".": "empty",
-  "|": 'wall',
+  "|": "wall",
   "@": Player,
 };
 
@@ -16,19 +16,21 @@ let Level = class Level {
     this.height = rows.length;
     this.width = rows[0].length;
     this.player;
-    this.goal;
-    this.rocks = [];
+    this.walls = [];
 
     this.rows = rows.map((row, y) => {
       return row.map((ch, x) => {
         let type = levelMap[ch];
-        if (typeof type === "string") return type;
+        if (typeof type === "string") {
+          if (type === "wall") {
+            this.walls.push([x, y]);
+            return type;
+          }
+          return type
+        }
         if (typeof type === "function") {
           if (type.type() === "player") {
             this.player = type.create(new Vector(x, y), 0);
-          }
-          if (type.type() === "goal") {
-            this.goal = type.create(new Vector(x, y));
           }
           return "empty";
         }

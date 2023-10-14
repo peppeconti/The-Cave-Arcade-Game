@@ -1,4 +1,4 @@
-let scale = 35;
+import { scale } from "./game_levels.js";
 
 let Display = class Display {
   constructor(parent, level) {
@@ -21,7 +21,7 @@ Display.prototype.clearDisplay = function () {
   this.cx.clearRect(0, 0, this.canvas.width, this.canvas.height);
 };
 
-Display.prototype.syncState = function (state, deltaTime) {
+Display.prototype.syncState = function (state, deltaTime, level) {
   this.clearDisplay();
   if (state.status === "START GAME") {
     state.intervall += deltaTime;
@@ -35,6 +35,8 @@ Display.prototype.syncState = function (state, deltaTime) {
       this.drawCountDown(state.intervall);
       state.intervall -= deltaTime;
     } else {
+      this.updateScreen(deltaTime);
+      this.drawBackGround(level);
       this.drawPlayer(state.player);
     }
   }
@@ -52,7 +54,7 @@ Display.prototype.drawPlayer = function (player) {
 
 Display.prototype.drawStarting = function () {
   this.cx.fillStyle = "white";
-  this.cx.font = "30px Arial";
+  this.cx.font = "30px 'Wallpoet'";
   this.cx.textAlign = "center";
   this.cx.fillText(
     "PRESS 'ENTER' TO START",
@@ -74,13 +76,30 @@ Display.prototype.drawCountDown = function (intervall) {
   this.cx.fill();
   this.cx.closePath();
   this.cx.fillStyle = "black";
-  this.cx.font = "50px Arial";
+  this.cx.font = "50px 'Wallpoet'";
   this.cx.textAlign = "center";
   this.cx.fillText(
     Math.ceil(intervall),
     this.canvas.width / 2,
-    this.canvas.height / 2 + 18
+    this.canvas.height / 2 + 15
   );
 };
+
+Display.prototype.drawBackGround = function (level) {
+  level.walls.forEach((e) => {
+    this.cx.fillStyle = "blue";
+    this.cx.fillRect(
+      (e[0] + this.viewport.left) * scale,
+      (e[1] + this.viewport.top) * scale,
+      scale,
+      scale
+    );
+  });
+};
+
+Display.prototype.updateScreen = function (time) {
+  let screen = this.viewport;
+  screen.left -= time * 1;
+}
 
 export default Display;
