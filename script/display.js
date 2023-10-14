@@ -29,6 +29,21 @@ Display.prototype.syncState = function (state, deltaTime, level) {
     if (state.intervall > 0 && state.intervall < 0.75) {
       this.drawStarting();
     }
+    this.cx.fillStyle = "white";
+    this.cx.font = "60px 'Wallpoet'";
+    this.cx.textAlign = "center";
+    this.cx.fillText(
+      "THE CAVE",
+      this.canvas.width / 2,
+      this.canvas.height / 2.5 + 25
+    );
+    this.cx.font = "15px 'Wallpoet'";
+    this.cx.textAlign = "left";
+    this.cx.fillText(
+      `© Giuseppe Conti ${new Date().getFullYear()}`,
+      20,
+      this.canvas.height - 20
+    );
   }
   if (state.status === "PLAYING") {
     if (state.intervall > 0) {
@@ -64,7 +79,7 @@ Display.prototype.drawStarting = function () {
   this.cx.fillText(
     "PRESS 'ENTER' TO START",
     this.canvas.width / 2,
-    this.canvas.height / 2 + 15
+    this.canvas.height / 2 + 45
   );
 };
 
