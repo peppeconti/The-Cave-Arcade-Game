@@ -128,13 +128,22 @@ Display.prototype.drawPlayer = function (player) {
 };
 
 Display.prototype.drawGoal = function (goal) {
+  this.cx.save();
+  this.cx.translate(goal.pos.x*scale, goal.pos.y*scale);
+  this.cx.rotate(goal.angle);
+
+  //this.cx.beginPath()
   this.cx.fillStyle = "red";
-  this.cx.fillRect(
-    goal.pos.x * scale,
-    goal.pos.y * scale,
-    goal.size.x * scale,
-    goal.size.y * scale
+  this.cx.beginPath()
+  this.cx.rect(
+    -(goal.size.x*scale)/2,
+    -(goal.size.y*scale)/2,
+    goal.size.x*scale,
+    goal.size.y*scale
   );
+  this.cx.fill();
+  this.cx.closePath();
+  this.cx.restore();
 };
 
 Display.prototype.drawPress = function (text) {
@@ -176,13 +185,6 @@ Display.prototype.drawBackGround = function (level) {
       scale
     );
   });
-    /*this.cx.fillStyle = "red";
-    this.cx.fillRect(
-      (level.goal[0][0] + this.viewport.left) * scale + scale/4,
-      (level.goal[0][1] + this.viewport.top) * scale + scale/4,
-      scale/2,
-      scale/2
-    );*/
 };
 
 Display.prototype.drawFragments = function (fragments) {

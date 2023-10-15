@@ -1,10 +1,9 @@
 import Vector from "./vector.js";
 
 let Goal = class Goal {
-  constructor(pos, basePos, wobble) {
+  constructor(pos) {
     this.pos = pos;
-    this.basePos = basePos;
-    this.wobble = wobble;
+    this.angle = 0;
   }
 
   static type() {
@@ -12,19 +11,14 @@ let Goal = class Goal {
   }
 
   static create(pos) {
-    let basePos = pos.add(new Vector(0.2, 0.1));
-    return new Goal(pos.add(basePos, basePos, Math.PI * 2));
+    return new Goal(pos.add(new Vector(0.5, 0.5)));
   }
 };
 
-const wobbleSpeed = 8, wobbleDist = .07;
-
 Goal.prototype.update = function (deltaTime) {
-  let wobble = this.wobble + deltaTime + wobbleSpeed;
-  let wobblePos = Math.sin(wobble) * wobbleDist;
-  return new Goal(this.pos.add(new Vector(0, wobblePos)), this.basePos, wobble)
+  this.angle += deltaTime;
 };
 
-Goal.prototype.size = new Vector(0.6, 0.6);
+Goal.prototype.size = new Vector(.5, .5);
 
 export default Goal;
