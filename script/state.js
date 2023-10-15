@@ -12,6 +12,9 @@ let State = class State {
 };
 
 State.prototype.update = function (deltaTime, keys, display, timer) {
+  if (this.status === "START GAME") {
+    audioFiles.opening.play();
+  }
   if (this.status === "PLAYING" && timer.delay < 0) {
     audioFiles.space.play();
     this.player.update(deltaTime, keys, display);
@@ -47,6 +50,7 @@ State.prototype.update = function (deltaTime, keys, display, timer) {
   }
   if (keys.Enter && this.status === "START GAME") {
     timer.delay = 3;
+    audioFiles.countdown.play();
     return new State(this.level, "PLAYING");
   }
   return newState;
