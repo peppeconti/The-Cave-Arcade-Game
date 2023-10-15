@@ -25,6 +25,7 @@ State.prototype.update = function (deltaTime, keys, display) {
   }
   let newState = new State(this.level, this.status, this.intervall);
   if (this.status === "GAME OVER") {
+    this.goal.update(deltaTime);
     this.level.player.fragments.forEach((e, i) => {
       if (i === 0) e.update(deltaTime, -1, -1);
       if (i === 1) e.update(deltaTime, 1, 1);

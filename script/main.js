@@ -41,7 +41,6 @@ function animate(deltaTimeFunc) {
 function runLevel(level) {
   let display = new Display(document.body, level);
   let state = new State(level, "START GAME", 0);
-  console.log(level);
   return new Promise((resolve) => {
     animate((deltaTime) => {
       state = state.update(deltaTime, arrowKeys, display);
