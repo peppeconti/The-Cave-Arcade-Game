@@ -14,6 +14,7 @@ let State = class State {
 State.prototype.update = function (deltaTime, keys, display) {
   if (this.status === "PLAYING" && this.intervall < 0) {
     this.player.update(deltaTime, keys, display);
+    //this.goal.update(deltaTime);
     if (this.player.overlap(this.walls, display.viewport)) {
       audioFiles.shipDestroy.play();
       return new State(this.level, "GAME OVER", 0);
