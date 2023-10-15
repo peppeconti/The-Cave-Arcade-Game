@@ -21,12 +21,12 @@ Display.prototype.clearDisplay = function () {
   this.cx.clearRect(0, 0, this.canvas.width, this.canvas.height);
 };
 
-Display.prototype.syncState = function (state, deltaTime, level) {
+Display.prototype.syncState = function (state, deltaTime, level, timer) {
   this.clearDisplay();
   if (state.status === "START GAME") {
-    state.intervall += deltaTime;
-    if (state.intervall > 1.25) state.intervall = 0;
-    if (state.intervall > 0 && state.intervall < 0.75) {
+    timer.intervall += deltaTime;
+    if (timer.intervall > 1.25) timer.intervall = 0;
+    if (timer.intervall > 0 && timer.intervall < 0.75) {
       this.drawPress("PRESS 'ENTER' TO START");
     }
     this.cx.fillStyle = "white";
@@ -46,9 +46,9 @@ Display.prototype.syncState = function (state, deltaTime, level) {
     );
   }
   if (state.status === "PLAYING") {
-    if (state.intervall > 0) {
-      this.drawCountDown(state.intervall);
-      state.intervall -= deltaTime;
+    if (timer.delay > 0) {
+      this.drawCountDown(timer);
+      timer.delay -= deltaTime;
     } else {
       this.updateScreen(deltaTime, level);
       this.drawBackGround(level);
@@ -61,37 +61,43 @@ Display.prototype.syncState = function (state, deltaTime, level) {
     this.drawBackGround(level);
     this.drawGoal(state.goal);
     this.drawFragments(state.player.fragments);
-    state.intervall += deltaTime;
-    if (state.intervall > 1.25) state.intervall = 0;
-    if (state.intervall > 0 && state.intervall < 0.75) {
-      this.drawPress("PRESS 'ENTER' TO RESTART");
+    timer.delay -= deltaTime;
+    if (timer.delay < 0) {
+      timer.intervall += deltaTime;
+      if (timer.intervall > 1.25) timer.intervall = 0;
+      if (timer.intervall > 0 && timer.intervall < 0.75) {
+        this.drawPress("PRESS 'ENTER' TO RESTART");
+      }
+      this.cx.fillStyle = "white";
+      this.cx.font = "60px 'Wallpoet'";
+      this.cx.textAlign = "center";
+      this.cx.fillText(
+        "GAME OVER",
+        this.canvas.width / 2,
+        this.canvas.height / 2.5 + 25
+      );
     }
-    this.cx.fillStyle = "white";
-    this.cx.font = "60px 'Wallpoet'";
-    this.cx.textAlign = "center";
-    this.cx.fillText(
-      "GAME OVER",
-      this.canvas.width / 2,
-      this.canvas.height / 2.5 + 25
-    );
   }
   if (state.status === "YOU WON") {
     this.updateScreen(deltaTime, level);
     this.drawBackGround(level);
     this.drawPlayer(state.player);
-    state.intervall += deltaTime;
-    if (state.intervall > 1.25) state.intervall = 0;
-    if (state.intervall > 0 && state.intervall < 0.75) {
-      this.drawPress("PRESS 'ENTER' TO RESTART");
+    timer.delay -= deltaTime;
+    if (timer.delay < 0) {
+      timer.intervall += deltaTime;
+      if (timer.intervall > 1.25) timer.intervall = 0;
+      if (timer.intervall > 0 && timer.intervall < 0.75) {
+        this.drawPress("PRESS 'ENTER' TO RESTART");
+      }
+      this.cx.fillStyle = "white";
+      this.cx.font = "60px 'Wallpoet'";
+      this.cx.textAlign = "center";
+      this.cx.fillText(
+        "YOU WON!",
+        this.canvas.width / 2,
+        this.canvas.height / 2.5 + 25
+      );
     }
-    this.cx.fillStyle = "white";
-    this.cx.font = "60px 'Wallpoet'";
-    this.cx.textAlign = "center";
-    this.cx.fillText(
-      "YOU WON!",
-      this.canvas.width / 2,
-      this.canvas.height / 2.5 + 25
-    );
   }
 };
 
@@ -129,15 +135,15 @@ Display.prototype.drawPlayer = function (player) {
 
 Display.prototype.drawGoal = function (goal) {
   this.cx.save();
-  this.cx.translate(goal.pos.x*scale, goal.pos.y*scale);
+  this.cx.translate(goal.pos.x * scale, goal.pos.y * scale);
   this.cx.rotate(goal.angle);
   this.cx.fillStyle = "red";
-  this.cx.beginPath()
+  this.cx.beginPath();
   this.cx.rect(
-    -(goal.size.x*scale)/2,
-    -(goal.size.y*scale)/2,
-    goal.size.x*scale,
-    goal.size.y*scale
+    -(goal.size.x * scale) / 2,
+    -(goal.size.y * scale) / 2,
+    goal.size.x * scale,
+    goal.size.y * scale
   );
   this.cx.fill();
   this.cx.closePath();
@@ -151,7 +157,7 @@ Display.prototype.drawPress = function (text) {
   this.cx.fillText(text, this.canvas.width / 2, this.canvas.height / 2 + 45);
 };
 
-Display.prototype.drawCountDown = function (intervall) {
+Display.prototype.drawCountDown = function (timer) {
   this.cx.beginPath();
   this.cx.arc(
     this.canvas.width / 2,
@@ -167,7 +173,7 @@ Display.prototype.drawCountDown = function (intervall) {
   this.cx.font = "50px 'Wallpoet'";
   this.cx.textAlign = "center";
   this.cx.fillText(
-    Math.ceil(intervall),
+    Math.ceil(timer.delay),
     this.canvas.width / 2,
     this.canvas.height / 2 + 15
   );

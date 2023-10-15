@@ -3,6 +3,7 @@ import { arrowKeys } from "./utils.js";
 import Level from "./level.js";
 import State from "./state.js";
 import Display from "./display.js";
+import { timer } from "./utils.js";
 
 function animate(deltaTimeFunc) {
   let lastTime = 0;
@@ -22,8 +23,8 @@ function runLevel(level) {
   let state = new State(level, "START GAME", 0);
   return new Promise((resolve) => {
     animate((deltaTime) => {
-      state = state.update(deltaTime, arrowKeys, display);
-      display.syncState(state, deltaTime, level);
+      state = state.update(deltaTime, arrowKeys, display, timer);
+      display.syncState(state, deltaTime, level, timer);
       return true;
     });
   });

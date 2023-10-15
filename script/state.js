@@ -7,23 +7,27 @@ let State = class State {
     this.walls = level.walls;
     this.goal = level.goal;
     this.status = status;
-    this.intervall = intervall;
+    //this.intervall = intervall;
   }
 };
 
-State.prototype.update = function (deltaTime, keys, display) {
-  if (this.status === "PLAYING" && this.intervall < 0) {
+State.prototype.update = function (deltaTime, keys, display, timer) {
+  if (this.status === "PLAYING" && timer.delay < 0) {
     this.player.update(deltaTime, keys, display);
     this.goal.update(deltaTime);
     if (this.player.overlap(this.walls, display.viewport)) {
       audioFiles.shipDestroy.play();
-      return new State(this.level, "GAME OVER", 0);
+      timer.delay = 2;
+      timer.intervall = 0;
+      return new State(this.level, "GAME OVER");
     };
     if (this.player.overlap(this.goal, display.viewport)) {
-      return new State(this.level, "YOU WON", 0);
+      timer.delay = 5;
+      timer.intervall = 0;
+      return new State(this.level, "YOU WON");
     };
   }
-  let newState = new State(this.level, this.status, this.intervall);
+  let newState = new State(this.level, this.status);
   if (this.status === "GAME OVER") {
     this.goal.update(deltaTime);
     this.level.player.fragments.forEach((e, i) => {
@@ -34,7 +38,8 @@ State.prototype.update = function (deltaTime, keys, display) {
     });
   }
   if (keys.Enter && this.status === "START GAME") {
-    return new State(this.level, "PLAYING", 3);
+    timer.delay = 3;
+    return new State(this.level, "PLAYING");
   }
   return newState;
 };

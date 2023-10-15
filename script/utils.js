@@ -1,6 +1,6 @@
 const timer = {
-  intervall: 0,
-  delay: 2,
+  "intervall": 0,
+  "delay": 0,
 };
 
 const scale = 35;
