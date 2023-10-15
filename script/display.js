@@ -1,4 +1,4 @@
-import { scale } from "./game_levels.js";
+import { scale } from "./utils.js";
 
 let Display = class Display {
   constructor(parent, level) {

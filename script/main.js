@@ -1,29 +1,8 @@
-import { LEVELS } from "./game_levels.js";
+import LEVELS from "./game_levels.js";
+import { arrowKeys } from "./utils.js";
 import Level from "./level.js";
 import State from "./state.js";
 import Display from "./display.js";
-
-function trackKeys(keys) {
-  let down = Object.create(null);
-  function track(event) {
-    //console.log(event.key)
-    if (keys.includes(event.key)) {
-      down[event.key] = event.type == "keydown";
-      event.preventDefault();
-    }
-  }
-  window.addEventListener("keydown", track);
-  window.addEventListener("keyup", track);
-  return down;
-}
-
-const arrowKeys = trackKeys([
-  "ArrowLeft",
-  "ArrowRight",
-  "ArrowUp",
-  "ArrowDown",
-  "Enter"
-]);
 
 function animate(deltaTimeFunc) {
   let lastTime = 0;

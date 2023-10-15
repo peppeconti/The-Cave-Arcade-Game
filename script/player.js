@@ -1,5 +1,5 @@
 import Vector from "./vector.js";
-import { scale } from "./game_levels.js";
+import { scale } from "./utils.js";
 
 class Fragment {
   constructor(pos) {

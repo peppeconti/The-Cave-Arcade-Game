@@ -19,6 +19,4 @@ const LEVELS = [
 `,
 ];
 
-const scale = 35;
-
-export { LEVELS, scale };
+export default LEVELS;
