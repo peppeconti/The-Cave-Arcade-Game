@@ -10,7 +10,7 @@ function animate(deltaTimeFunc) {
   const frame = (timeStamp) => {
     if (lastTime) {
       let deltaTime = Math.min(timeStamp - lastTime, 100) / 1000;
-      if (deltaTimeFunc(deltaTime) === false) return;
+      deltaTimeFunc(deltaTime);
     }
     lastTime = timeStamp;
     requestAnimationFrame(frame);
@@ -18,22 +18,31 @@ function animate(deltaTimeFunc) {
   requestAnimationFrame(frame);
 }
 
-function runLevel(level) {
+function runLevel(level, status) {
   let display = new Display(document.body, level);
-  let state = new State(level, "START GAME", 0);
+  let state = new State(level, status, 0);
   return new Promise((resolve) => {
     animate((deltaTime) => {
       state = state.update(deltaTime, arrowKeys, display, timer);
       display.syncState(state, deltaTime, level, timer);
-      return true;
+      if (state.status === "RESTART" || state.status === "NEW LEVEL") resolve(state.status);
     });
   });
 }
 
-function runGame(plan) {
-  //for (let level = 0; level < plans.length; ) {
-    runLevel(new Level(plan[0]));
-  //}
+async function runGame(plans) {
+  let newState = "START GAME";
+  for (let level = 0; level < plans.length; ) {
+    // WAITING FOR PROMISE RESOLVING
+    let status = await runLevel(new Level(plans[level]), newState);
+    // RESETTING TIMER
+    timer.delay = 3;
+    timer.intervall = 0;
+    // SETTNG STATUS
+    newState = "PLAYING";
+    // CHECKING STATUS AFTER RESOLVING PROMISE
+    if (status == "NEW LEVEL") level++
+  }
 }
 
 runGame(LEVELS, Display);

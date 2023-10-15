@@ -200,7 +200,7 @@ Display.prototype.drawFragments = function (fragments) {
 };
 
 Display.prototype.updateScreen = function (time, level) {
-  let vel = 1;
+  let vel = 10;
   let screen = this.viewport;
   let goal = level.goal;
   let gateFragments = level.gate.fragments;

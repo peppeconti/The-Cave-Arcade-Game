@@ -63,18 +63,22 @@ Player.prototype.size = new Vector(0.8, 0.6);
 
 let friction = 0.1;
 
-Player.prototype.update = function (time, keys, display) {
+Player.prototype.update = function (time, keys, display, audio) {
   if (keys.ArrowRight) {
     this.acc.x = this.acceleration;
+    audio.play();
   }
   if (keys.ArrowLeft) {
     this.acc.x = -this.acceleration;
+    audio.play();
   }
   if (keys.ArrowDown) {
     this.acc.y = this.acceleration;
+    audio.play();
   }
   if (keys.ArrowUp) {
     this.acc.y = -this.acceleration;
+    audio.play();
   }
   if (!keys.ArrowRight && !keys.ArrowLeft) {
     this.acc.x = 0;

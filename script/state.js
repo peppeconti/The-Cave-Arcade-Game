@@ -14,7 +14,7 @@ let State = class State {
 State.prototype.update = function (deltaTime, keys, display, timer) {
   if (this.status === "PLAYING" && timer.delay < 0) {
     audioFiles.space.play();
-    this.player.update(deltaTime, keys, display);
+    this.player.update(deltaTime, keys, display, audioFiles.moving);
     this.goal.update(deltaTime);
     if (this.player.overlap(this.walls, display.viewport)) {
       audioFiles.shipDestroy.play();
@@ -53,6 +53,14 @@ State.prototype.update = function (deltaTime, keys, display, timer) {
     timer.delay = 3;
     audioFiles.countdown.play();
     return new State(this.level, "PLAYING");
+  }
+  if (keys.Enter && this.status === "GAME OVER") {
+    display.canvas.remove();
+    return new State(this.level, "RESTART");
+  }
+  if (keys.Enter && this.status === "YOU WON") {
+    display.canvas.remove();
+    return new State(this.level, "NEW LEVEL");
   }
   return newState;
 };
