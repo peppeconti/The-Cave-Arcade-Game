@@ -1,18 +1,19 @@
 import audioFiles from "./audio.js";
 
 let State = class State {
-  constructor(level, status, intervall) {
+  constructor(level, status) {
     this.level = level;
     this.player = level.player;
     this.walls = level.walls;
     this.goal = level.goal;
+    this.gate =level.gate;
     this.status = status;
-    //this.intervall = intervall;
   }
 };
 
 State.prototype.update = function (deltaTime, keys, display, timer) {
   if (this.status === "PLAYING" && timer.delay < 0) {
+    audioFiles.space.play();
     this.player.update(deltaTime, keys, display);
     this.goal.update(deltaTime);
     if (this.player.overlap(this.walls, display.viewport)) {
@@ -22,8 +23,9 @@ State.prototype.update = function (deltaTime, keys, display, timer) {
       return new State(this.level, "GAME OVER");
     };
     if (this.player.overlap(this.goal, display.viewport)) {
-      timer.delay = 5;
+      timer.delay = 3.25;
       timer.intervall = 0;
+      audioFiles.closingGate.play();
       return new State(this.level, "YOU WON");
     };
   }
@@ -35,6 +37,12 @@ State.prototype.update = function (deltaTime, keys, display, timer) {
       if (i === 1) e.update(deltaTime, 1, 1);
       if (i === 2) e.update(deltaTime, -1, 1);
       if (i === 3) e.update(deltaTime, 1, -1);
+    });
+  }
+  if (this.status === "YOU WON") {
+    this.level.gate.fragments.forEach((e, i) => {
+      if (i === 0) e.update(deltaTime, 1, this.level.gate);
+      if (i === 1) e.update(deltaTime, -1, this.level.gate);
     });
   }
   if (keys.Enter && this.status === "START GAME") {

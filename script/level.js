@@ -1,10 +1,12 @@
 import Player from "./player.js";
 import Vector from "./vector.js";
 import Goal from "./goal.js";
+import Gate from "./gate.js";
 
 const levelMap = {
   ".": "empty",
   "|": "wall",
+  "i": Gate,
   "+": Goal,
   "@": Player,
 };
@@ -19,6 +21,7 @@ let Level = class Level {
     this.width = rows[0].length;
     this.player;
     this.goal;
+    this.gate;
     this.walls = [];
 
     this.rows = rows.map((row, y) => {
@@ -37,6 +40,9 @@ let Level = class Level {
           }
           if (type.type() === "goal") {
             this.goal = type.create(new Vector(x, y));
+          }
+          if (type.type() === "gate") {
+            this.gate = type.create(new Vector(x, y));
           }
           return "empty";
         }

@@ -51,6 +51,7 @@ Display.prototype.syncState = function (state, deltaTime, level, timer) {
       timer.delay -= deltaTime;
     } else {
       this.updateScreen(deltaTime, level);
+      this.drawGate(state.gate.fragments);
       this.drawBackGround(level);
       this.drawGoal(state.goal);
       this.drawPlayer(state.player);
@@ -58,6 +59,7 @@ Display.prototype.syncState = function (state, deltaTime, level, timer) {
   }
   if (state.status === "GAME OVER") {
     this.updateScreen(deltaTime, level);
+    this.drawGate(state.gate.fragments);
     this.drawBackGround(level);
     this.drawGoal(state.goal);
     this.drawFragments(state.player.fragments);
@@ -80,6 +82,7 @@ Display.prototype.syncState = function (state, deltaTime, level, timer) {
   }
   if (state.status === "YOU WON") {
     this.updateScreen(deltaTime, level);
+    this.drawGate(state.gate.fragments);
     this.drawBackGround(level);
     this.drawPlayer(state.player);
     timer.delay -= deltaTime;
@@ -103,33 +106,12 @@ Display.prototype.syncState = function (state, deltaTime, level, timer) {
 
 Display.prototype.drawPlayer = function (player) {
   this.cx.fillStyle = "white";
-  // TOP RIGHT
-  this.cx.fillRect(
-    (player.pos.x + player.size.x / 2) * scale,
-    player.pos.y * scale,
-    (player.size.x / 2) * scale,
-    (player.size.y / 1.9) * scale
-  );
-  // TOP LEFT
+
   this.cx.fillRect(
     player.pos.x * scale,
     player.pos.y * scale,
-    (player.size.x / 1.9) * scale,
-    (player.size.y / 1.9) * scale
-  );
-  // BOTTOM LEFT
-  this.cx.fillRect(
-    player.pos.x * scale,
-    (player.pos.y + player.size.y / 2) * scale,
-    (player.size.x / 1.9) * scale,
-    (player.size.y / 2) * scale
-  );
-  // BOTTOM RIGHT
-  this.cx.fillRect(
-    (player.pos.x + player.size.x / 2) * scale,
-    (player.pos.y + player.size.y / 2) * scale,
-    (player.size.x / 2) * scale,
-    (player.size.y / 2) * scale
+    player.size.x * scale,
+    player.size.y * scale
   );
 };
 
@@ -191,6 +173,19 @@ Display.prototype.drawBackGround = function (level) {
   });
 };
 
+Display.prototype.drawGate = function (fragments) {
+  this.cx.fillStyle = "grey";
+
+  fragments.forEach((e) => {
+    this.cx.fillRect(
+      e.pos.x * scale,
+      e.pos.y * scale,
+      e.size.x * scale,
+      e.size.y * scale
+    );
+  });
+};
+
 Display.prototype.drawFragments = function (fragments) {
   this.cx.fillStyle = "white";
 
@@ -205,12 +200,14 @@ Display.prototype.drawFragments = function (fragments) {
 };
 
 Display.prototype.updateScreen = function (time, level) {
-  let vel = 5;
+  let vel = 1;
   let screen = this.viewport;
   let goal = level.goal;
+  let gateFragments = level.gate.fragments;
   if (screen.left * scale > -(level.width * scale - this.canvas.width)) {
     screen.left -= time * vel;
     goal.pos.x -= time * vel;
+    gateFragments.forEach(e => e.pos.x -= time * vel)
   }
 };
 
