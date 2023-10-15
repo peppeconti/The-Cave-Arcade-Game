@@ -87,9 +87,6 @@ Player.prototype.update = function (time, keys, display) {
   this.pos = this.pos.add(this.vel);
   this.fragments.forEach((e) => (e.pos = e.pos.add(this.vel)));
 
-  /*if (this.pos.x < 0) {
-    this.pos.x = 0;
-  }*/
   if (this.pos.x < 0) {
     this.pos.x = 0;
     this.fragments.forEach((e, i) => {
@@ -166,14 +163,18 @@ Player.prototype.update = function (time, keys, display) {
   return new Player(newPos);
 };
 
-Player.prototype.overlap = function (actors, viewport) {
-  return actors.some(
+Player.prototype.overlap = function (el, viewport) {
+  if (el.length) return el.some(
     (actor) =>
       this.pos.x + this.size.x > actor[0] + viewport.left &&
       this.pos.x < actor[0] + viewport.left + 1 &&
       this.pos.y + this.size.y > actor[1] + viewport.top &&
       this.pos.y < actor[1] + viewport.top + 1
-  );
+  ) 
+  else return this.pos.x + this.size.x > el.pos.x &&
+      this.pos.x < el.pos.x + el.size.x &&
+      this.pos.y + this.size.y > el.pos.y &&
+      this.pos.y < el.pos.y + el.size.y
 };
 
 export default Player;

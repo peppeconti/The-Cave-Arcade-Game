@@ -25,20 +25,6 @@ const arrowKeys = trackKeys([
   "Enter"
 ]);
 
-/*const cc = async () => {
-  let pino = await ciucca();
-  console.log(pino)
-
-}
-
-cc();
-
-function ciucca() {
-  return new Promise(resolve => {
-    resolve(new Level(LEVELS));
-  })
-}*/
-
 function animate(deltaTimeFunc) {
   let lastTime = 0;
   const frame = (timeStamp) => {
@@ -55,6 +41,7 @@ function animate(deltaTimeFunc) {
 function runLevel(level) {
   let display = new Display(document.body, level);
   let state = new State(level, "START GAME", 0);
+  console.log(level.goal);
   return new Promise((resolve) => {
     animate((deltaTime) => {
       state = state.update(deltaTime, arrowKeys, display);

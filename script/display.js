@@ -52,12 +52,14 @@ Display.prototype.syncState = function (state, deltaTime, level) {
     } else {
       this.updateScreen(deltaTime, level);
       this.drawBackGround(level);
+      this.drawGoal(state.goal);
       this.drawPlayer(state.player);
     }
   }
   if (state.status === "GAME OVER") {
     this.updateScreen(deltaTime, level);
     this.drawBackGround(level);
+    this.drawGoal(state.goal);
     this.drawFragments(state.player.fragments);
     state.intervall += deltaTime;
     if (state.intervall > 1.25) state.intervall = 0;
@@ -125,6 +127,16 @@ Display.prototype.drawPlayer = function (player) {
   );
 };
 
+Display.prototype.drawGoal = function (goal) {
+  this.cx.fillStyle = "red";
+  this.cx.fillRect(
+    goal.pos.x * scale,
+    goal.pos.y * scale,
+    goal.size.x * scale,
+    goal.size.y * scale
+  );
+};
+
 Display.prototype.drawPress = function (text) {
   this.cx.fillStyle = "white";
   this.cx.font = "30px 'Wallpoet'";
@@ -164,13 +176,13 @@ Display.prototype.drawBackGround = function (level) {
       scale
     );
   });
-    this.cx.fillStyle = "red";
+    /*this.cx.fillStyle = "red";
     this.cx.fillRect(
       (level.goal[0][0] + this.viewport.left) * scale + scale/4,
       (level.goal[0][1] + this.viewport.top) * scale + scale/4,
       scale/2,
       scale/2
-    );
+    );*/
 };
 
 Display.prototype.drawFragments = function (fragments) {
@@ -187,9 +199,12 @@ Display.prototype.drawFragments = function (fragments) {
 };
 
 Display.prototype.updateScreen = function (time, level) {
+  let vel = 5;
   let screen = this.viewport;
+  let goal = level.goal;
   if (screen.left * scale > -(level.width * scale - this.canvas.width)) {
-    screen.left -= time * 5;
+    screen.left -= time * vel;
+    goal.pos.x -= time * vel;
   }
 };
 
