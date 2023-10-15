@@ -1,5 +1,5 @@
 const audioFiles = {
-    'opening': new Audio("./audio/opening.mp3"),
+    'gameOver': new Audio("./audio/lost_game.mp3"),
     'shipDestroy': new Audio("./audio/game_over.mp3"),
     'closingGate': new Audio("./audio/gate.mp3"),
     'space': new Audio("./audio/space.mp3"),
