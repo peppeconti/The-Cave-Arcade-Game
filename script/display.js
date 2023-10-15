@@ -88,7 +88,7 @@ Display.prototype.syncState = function (state, deltaTime, level) {
     this.cx.font = "60px 'Wallpoet'";
     this.cx.textAlign = "center";
     this.cx.fillText(
-      "YOU WON",
+      "YOU WON!",
       this.canvas.width / 2,
       this.canvas.height / 2.5 + 25
     );
@@ -131,8 +131,6 @@ Display.prototype.drawGoal = function (goal) {
   this.cx.save();
   this.cx.translate(goal.pos.x*scale, goal.pos.y*scale);
   this.cx.rotate(goal.angle);
-
-  //this.cx.beginPath()
   this.cx.fillStyle = "red";
   this.cx.beginPath()
   this.cx.rect(
