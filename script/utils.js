@@ -1,6 +1,6 @@
 const timer = {
+  "delay": 3,
   "intervall": 0,
-  "delay": 0,
   "limit": 0
 };
 

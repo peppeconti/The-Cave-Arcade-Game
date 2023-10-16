@@ -40,7 +40,7 @@ async function runGame(plans) {
     timer.intervall = 0;
     timer.limit = 0;
     // SETTNG STATUS
-    newState = "PLAYING";
+    newState = "COUNTDOWN";
     // CHECKING STATUS AFTER RESOLVING PROMISE
     if (status == "NEW LEVEL") level++
   }

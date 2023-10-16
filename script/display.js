@@ -45,17 +45,16 @@ Display.prototype.syncState = function (state, deltaTime, level, timer) {
       this.canvas.height - 20
     );
   }
+  if (state.status === "COUNTDOWN") {
+    this.drawCountDown(timer);
+    timer.delay -= deltaTime;
+  }
   if (state.status === "PLAYING") {
-    if (timer.delay > 0) {
-      this.drawCountDown(timer);
-      timer.delay -= deltaTime;
-    } else {
-      this.updateScreen(deltaTime, level);
-      this.drawGate(state.gate.fragments);
-      this.drawBackGround(level);
-      this.drawGoal(state.goal);
-      this.drawPlayer(state.player);
-    }
+    this.updateScreen(deltaTime, level);
+    this.drawGate(state.gate.fragments);
+    this.drawBackGround(level);
+    this.drawGoal(state.goal);
+    this.drawPlayer(state.player);
   }
   if (state.status === "GAME OVER") {
     this.updateScreen(deltaTime, level);
@@ -207,7 +206,7 @@ Display.prototype.updateScreen = function (time, level) {
   if (screen.left * scale > -(level.width * scale - this.canvas.width)) {
     screen.left -= time * vel;
     goal.pos.x -= time * vel;
-    gateFragments.forEach(e => e.pos.x -= time * vel)
+    gateFragments.forEach((e) => (e.pos.x -= time * vel));
   }
 };
 

@@ -13,8 +13,8 @@ let State = class State {
 
 State.prototype.update = function (deltaTime, keys, display, timer) {
   if (this.status === "PLAYING" && timer.delay < 0) {
-    audioFiles.space.play();
-    this.player.update(deltaTime, keys, display, audioFiles.moving);
+    //audioFiles.space.play();
+    this.player.update(deltaTime, keys, display);
     this.goal.update(deltaTime);
     if (this.player.overlap(this.walls, display.viewport)) {
       audioFiles.shipDestroy.play();
@@ -25,7 +25,7 @@ State.prototype.update = function (deltaTime, keys, display, timer) {
     if (this.player.overlap(this.goal, display.viewport)) {
       timer.delay = 3.25;
       timer.intervall = 0;
-      audioFiles.closingGate.play();
+      //audioFiles.closingGate.play();
       return new State(this.level, "YOU WON");
     };
   }
@@ -39,8 +39,8 @@ State.prototype.update = function (deltaTime, keys, display, timer) {
       if (i === 3) e.update(deltaTime, 1, -1);
     });
     if(timer.delay < 0) {
-      audioFiles.space.pause();
-      audioFiles.gameOver.play();
+      //audioFiles.space.pause();
+      //audioFiles.gameOver.play();
     }
   }
   if (this.status === "YOU WON") {
@@ -50,9 +50,11 @@ State.prototype.update = function (deltaTime, keys, display, timer) {
     });
   }
   if (keys.Enter && this.status === "START GAME") {
-    timer.delay = 3;
-    audioFiles.countdown.play();
-    return new State(this.level, "PLAYING");
+    return new State(this.level, "COUNTDOWN");
+  }
+  if (this.status === "COUNTDOWN") {
+    //audioFiles.countdown.play();
+    if (timer.delay < 0) return new State(this.level, "PLAYING");
   }
   if (keys.Enter && this.status === "GAME OVER") {
     display.canvas.remove();
