@@ -45,8 +45,8 @@ State.prototype.update = function (deltaTime, keys, display, timer) {
   }
   if (this.status === "YOU WON") {
     this.level.gate.fragments.forEach((e, i) => {
-      if (i === 0) e.update(deltaTime, 1, this.level.gate);
-      if (i === 1) e.update(deltaTime, -1, this.level.gate);
+      if (i === 0) e.update(deltaTime, 1, this.level.gate, timer);
+      if (i === 1) e.update(deltaTime, -1, this.level.gate, timer);
     });
   }
   if (keys.Enter && this.status === "START GAME") {

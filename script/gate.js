@@ -11,13 +11,12 @@ class Fragment {
   }
 }
 
-let limit = 0;
 let translation = .45
 
-Fragment.prototype.update = function (time, directionY, gate) {
+Fragment.prototype.update = function (time, directionY, gate, timer) {
     const fragmentsNum = gate.fragments.length;
-    if (limit < translation*fragmentsNum) {
-        limit += time * this.vel;
+    if (timer.limit < translation*fragmentsNum) {
+        timer.limit += time * this.vel;
         this.pos.y += time * directionY * this.vel;
     }
 };

@@ -38,6 +38,7 @@ async function runGame(plans) {
     // RESETTING TIMER
     timer.delay = 3;
     timer.intervall = 0;
+    timer.limit = 0;
     // SETTNG STATUS
     newState = "PLAYING";
     // CHECKING STATUS AFTER RESOLVING PROMISE
