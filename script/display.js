@@ -101,6 +101,28 @@ Display.prototype.syncState = function (state, deltaTime, level, timer) {
       );
     }
   }
+  if (state.status === "COMPLETED") {
+    this.updateScreen(deltaTime, level);
+    this.drawGate(state.gate.fragments);
+    this.drawBackGround(level);
+    this.drawPlayer(state.player);
+    timer.delay -= deltaTime;
+    if (timer.delay < 0) {
+      timer.intervall += deltaTime;
+      if (timer.intervall > 1.25) timer.intervall = 0;
+      if (timer.intervall > 0 && timer.intervall < 0.75) {
+        this.drawPress("PRESS 'ENTER' TO RESET");
+      }
+      this.cx.fillStyle = "white";
+      this.cx.font = "60px 'Wallpoet'";
+      this.cx.textAlign = "center";
+      this.cx.fillText(
+        "GAME COMPLETED",
+        this.canvas.width / 2,
+        this.canvas.height / 2.5 + 25
+      );
+    }
+  }
 };
 
 Display.prototype.drawPlayer = function (player) {

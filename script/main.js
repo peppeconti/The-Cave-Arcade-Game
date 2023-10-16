@@ -18,32 +18,41 @@ function animate(deltaTimeFunc) {
   requestAnimationFrame(frame);
 }
 
-function runLevel(level, status) {
+function runLevel(level, status, lastLevel) {
   let display = new Display(document.body, level);
-  let state = new State(level, status, 0);
+  let state = new State(level, status, lastLevel);
   return new Promise((resolve) => {
     animate((deltaTime) => {
       state = state.update(deltaTime, arrowKeys, display, timer);
       display.syncState(state, deltaTime, level, timer);
-      if (state.status === "RESTART" || state.status === "NEW LEVEL") resolve(state.status);
+      if (state.status === "RESTART" || state.status === "NEW LEVEL" || state.status === "NEW GAME") {
+        resolve(state.status);
+      }
     });
   });
 }
 
 async function runGame(plans) {
   let newState = "START GAME";
-  for (let level = 0; level < plans.length; ) {
+  let lastLevel = false;
+  for (let level = 0; level < plans.length;) {
     // WAITING FOR PROMISE RESOLVING
-    let status = await runLevel(new Level(plans[level]), newState);
+    let status = await runLevel(new Level(plans[level]), newState, lastLevel);
     // RESETTING TIMER
     timer.delay = 3;
     timer.intervall = 0;
     timer.limit = 0;
-    // SETTNG STATUS
-    newState = "COUNTDOWN";
     // CHECKING STATUS AFTER RESOLVING PROMISE
-    if (status == "NEW LEVEL") level++
+    if (status === "NEW LEVEL") {
+      level++;
+      newState = "COUNTDOWN";
+      if (level === LEVELS.length-1 ) lastLevel = true;
+    } else if (status === "NEW GAME") {
+      level = 0;
+      newState = "START GAME";
+      lastLevel = false;
+    } else newState = "COUNTDOWN";
   }
 }
 
-runGame(LEVELS, Display);
+runGame(LEVELS);
