@@ -1,9 +1,9 @@
-import LEVELS from "./game_levels.js";
-import { arrowKeys } from "./utils.js";
-import Level from "./level.js";
-import State from "./state.js";
-import Display from "./display.js";
-import { timer } from "./utils.js";
+import LEVELS from "./script/game_levels.js";
+import { arrowKeys } from "./script/utils.js";
+import Level from "./script/level.js";
+import State from "./script/state.js";
+import Display from "./script/display.js";
+import { timer } from "./script/utils.js";
 
 function animate(deltaTimeFunc) {
   let lastTime = 0;
