@@ -34,24 +34,21 @@ function runLevel(level, status, lastLevel) {
 
 async function runGame(plans) {
   let newState = "START GAME";
-  let lastLevel = false;
   for (let level = 0; level < plans.length;) {
     // WAITING FOR PROMISE RESOLVING
-    let status = await runLevel(new Level(plans[level]), newState, lastLevel);
+    let status = await runLevel(new Level(plans[level], plans), newState);
     // RESETTING TIMER
     timer.delay = 3;
     timer.intervall = 0;
     timer.limit = 0;
+    status !== "NEW GAME" ? newState = "COUNTDOWN" : newState = "START GAME";
     // CHECKING STATUS AFTER RESOLVING PROMISE
     if (status === "NEW LEVEL") {
       level++;
-      newState = "COUNTDOWN";
-      if (level === LEVELS.length-1 ) lastLevel = true;
-    } else if (status === "NEW GAME") {
+    }
+    if (status === "NEW GAME") {
       level = 0;
-      newState = "START GAME";
-      lastLevel = false;
-    } else newState = "COUNTDOWN";
+    }
   }
 }
 

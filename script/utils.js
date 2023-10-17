@@ -1,7 +1,7 @@
 const timer = {
-  "delay": 3,
-  "intervall": 0,
-  "limit": 0
+  delay: 3,
+  intervall: 0,
+  limit: 0,
 };
 
 const scale = 35;
@@ -9,8 +9,8 @@ const scale = 35;
 function trackKeys(keys) {
   let down = Object.create(null);
   function track(event) {
-    if (keys.includes(event.key)) {
-      down[event.key] = event.type == "keydown";
+    if (keys.includes(event.code)) {
+      down[event.code] = event.type == "keydown";
       event.preventDefault();
     }
   }
@@ -25,6 +25,7 @@ const arrowKeys = trackKeys([
   "ArrowUp",
   "ArrowDown",
   "Enter",
+  "Space",
 ]);
 
 export { timer, scale, arrowKeys };

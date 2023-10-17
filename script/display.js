@@ -54,6 +54,7 @@ Display.prototype.syncState = function (state, deltaTime, level, timer) {
     this.drawGate(state.gate.fragments);
     this.drawBackGround(level);
     this.drawGoal(state.goal);
+    this.showLevel(level);
     this.drawPlayer(state.player);
   }
   if (state.status === "GAME OVER") {
@@ -61,13 +62,14 @@ Display.prototype.syncState = function (state, deltaTime, level, timer) {
     this.drawGate(state.gate.fragments);
     this.drawBackGround(level);
     this.drawGoal(state.goal);
+    this.showLevel(level);
     this.drawFragments(state.player.fragments);
     timer.delay -= deltaTime;
     if (timer.delay < 0) {
       timer.intervall += deltaTime;
       if (timer.intervall > 1.25) timer.intervall = 0;
       if (timer.intervall > 0 && timer.intervall < 0.75) {
-        this.drawPress("PRESS 'ENTER' TO RESTART");
+        this.drawPress("PRESS 'SPACE' TO RESTART");
       }
       this.cx.fillStyle = "white";
       this.cx.font = "60px 'Wallpoet'";
@@ -83,19 +85,20 @@ Display.prototype.syncState = function (state, deltaTime, level, timer) {
     this.updateScreen(deltaTime, level);
     this.drawGate(state.gate.fragments);
     this.drawBackGround(level);
+    this.showLevel(level);
     this.drawPlayer(state.player);
     timer.delay -= deltaTime;
     if (timer.delay < 0) {
       timer.intervall += deltaTime;
       if (timer.intervall > 1.25) timer.intervall = 0;
       if (timer.intervall > 0 && timer.intervall < 0.75) {
-        this.drawPress("PRESS 'ENTER' TO RESTART");
+        this.drawPress("PRESS 'SPACE' TO NEXT LEVEL");
       }
       this.cx.fillStyle = "white";
       this.cx.font = "60px 'Wallpoet'";
       this.cx.textAlign = "center";
       this.cx.fillText(
-        "YOU WON!",
+        "WELL DONE!",
         this.canvas.width / 2,
         this.canvas.height / 2.5 + 25
       );
@@ -105,19 +108,20 @@ Display.prototype.syncState = function (state, deltaTime, level, timer) {
     this.updateScreen(deltaTime, level);
     this.drawGate(state.gate.fragments);
     this.drawBackGround(level);
+    this.showLevel(level);
     this.drawPlayer(state.player);
     timer.delay -= deltaTime;
     if (timer.delay < 0) {
       timer.intervall += deltaTime;
       if (timer.intervall > 1.25) timer.intervall = 0;
       if (timer.intervall > 0 && timer.intervall < 0.75) {
-        this.drawPress("PRESS 'ENTER' TO RESET");
+        this.drawPress("PRESS 'SPACE' TO RESET");
       }
       this.cx.fillStyle = "white";
       this.cx.font = "60px 'Wallpoet'";
       this.cx.textAlign = "center";
       this.cx.fillText(
-        "GAME COMPLETED",
+        "COMPLETED!",
         this.canvas.width / 2,
         this.canvas.height / 2.5 + 25
       );
@@ -221,7 +225,7 @@ Display.prototype.drawFragments = function (fragments) {
 };
 
 Display.prototype.updateScreen = function (time, level) {
-  let vel = 1;
+  let vel = 5;
   let screen = this.viewport;
   let goal = level.goal;
   let gateFragments = level.gate.fragments;
@@ -231,5 +235,16 @@ Display.prototype.updateScreen = function (time, level) {
     gateFragments.forEach((e) => (e.pos.x -= time * vel));
   }
 };
+
+Display.prototype.showLevel = function (level) {
+  this.cx.fillStyle = "white";
+  this.cx.font = "20px 'Wallpoet'";
+  this.cx.textAlign = "left";
+  this.cx.fillText(
+    `Level ${level.levelNum}`,
+    15,
+    25
+  );
+}
 
 export default Display;

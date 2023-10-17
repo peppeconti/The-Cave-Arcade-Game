@@ -12,8 +12,8 @@ const levelMap = {
 };
 
 let Level = class Level {
-  constructor(plan) {
-    let rows = plan
+  constructor(level, plans) {
+    let rows = level
       .trim()
       .split("\n")
       .map((l) => [...l]);
@@ -23,6 +23,8 @@ let Level = class Level {
     this.goal;
     this.gate;
     this.walls = [];
+    this.isLast = plans.indexOf(level) === plans.length - 1;
+    this.levelNum = plans.indexOf(level) + 1;
 
     this.rows = rows.map((row, y) => {
       return row.map((ch, x) => {

@@ -1,14 +1,13 @@
 import audioFiles from "./audio.js";
 
 let State = class State {
-  constructor(level, status, lastLevel) {
+  constructor(level, status) {
     this.level = level;
     this.player = level.player;
     this.walls = level.walls;
     this.goal = level.goal;
     this.gate =level.gate;
     this.status = status;
-    this.lastLevel = lastLevel;
   }
 };
 
@@ -21,16 +20,15 @@ State.prototype.update = function (deltaTime, keys, display, timer) {
       audioFiles.shipDestroy.play();
       timer.delay = 2.5;
       timer.intervall = 0;
-      return new State(this.level, "GAME OVER", this.lastLevel);
+      return new State(this.level, "GAME OVER");
     };
     if (this.player.overlap(this.goal, display.viewport)) {
       timer.delay = 3.25;
       timer.intervall = 0;
-      //audioFiles.closingGate.play();
-      return this.lastLevel ? new State(this.level, "COMPLETED", this.lastLevel) : new State(this.level, "YOU WON", this.lastLevel)
+      audioFiles.closingGate.play();
+      return this.level.isLast ? new State(this.level, "COMPLETED") : new State(this.level, "YOU WON")
     };
   }
-  let newState = new State(this.level, this.status, this.lastLevel);
   if (this.status === "GAME OVER") {
     this.goal.update(deltaTime);
     this.level.player.fragments.forEach((e, i) => {
@@ -44,31 +42,32 @@ State.prototype.update = function (deltaTime, keys, display, timer) {
       audioFiles.gameOver.play();
     }*/
   }
-  if (this.status === "YOU WON") {
+  if (this.status === "YOU WON" || this.status === "COMPLETED") {
     this.level.gate.fragments.forEach((e, i) => {
       if (i === 0) e.update(deltaTime, 1, this.level.gate, timer);
       if (i === 1) e.update(deltaTime, -1, this.level.gate, timer);
     });
   }
   if (keys.Enter && this.status === "START GAME") {
-    return new State(this.level, "COUNTDOWN", this.lastLevel);
+    return new State(this.level, "COUNTDOWN");
   }
   if (this.status === "COUNTDOWN") {
     //audioFiles.countdown.play();
-    if (timer.delay < 0) return new State(this.level, "PLAYING", this.lastLevel);
+    if (timer.delay < 0) return new State(this.level, "PLAYING");
   }
-  if (keys.Enter && this.status === "GAME OVER") {
+  if (keys.Space && timer.delay < 0 && this.status === "GAME OVER") {
     display.canvas.remove();
-    return new State(this.level, "RESTART", this.lastLevel);
+    return new State(this.level, "RESTART");
   }
-  if (keys.Enter && this.status === "YOU WON") {
+  if (keys.Space &&  timer.delay < 0 && this.status === "YOU WON") {
     display.canvas.remove();
-    return new State(this.level, "NEW LEVEL", this.lastLevel);
+    return new State(this.level, "NEW LEVEL");
   }
-  if (keys.Enter && this.status === "COMPLETED") {
+  if (keys.Space && timer.delay < 0 && this.status === "COMPLETED") {
     display.canvas.remove();
-    return new State(this.level, "NEW GAME", this.lastLevel);
+    return new State(this.level, "NEW GAME");
   }
+  let newState = new State(this.level, this.status);
   return newState;
 };
 
