@@ -1,22 +1,56 @@
-<svg width="500" height="500" viewBox="0 0 500 500" fill="none" xmlns="http://www.w3.org/2000/svg">
-<g clip-path="url(#clip0_1_13)">
-<rect width="500" height="500" fill="transparent"/>
-<rect x="100" width="100" height="100" fill="#121212"/>
-<rect y="100" width="100" height="100" fill="#121212"/>
-<rect x="200" width="100" height="100" fill="#121212"/>
-<rect x="300" width="100" height="100" fill="#121212"/>
-<rect x="400" y="100" width="100" height="100" fill="#121212"/>
-<rect x="400" y="200" width="100" height="100" fill="#121212"/>
-<rect x="400" y="300" width="100" height="100" fill="#121212"/>
-<rect x="300" y="400" width="100" height="100" fill="#121212"/>
-<rect x="202" y="400" width="100" height="100" fill="#121212"/>
-<rect x="100" y="400" width="100" height="100" fill="#121212"/>
-<rect y="300" width="100" height="100" fill="#121212"/>
-<rect x="200" y="400" width="100" height="100" fill="#121212"/>
-</g>
-<defs>
-<clipPath id="clip0_1_13">
-<rect width="500" height="500" fill="white"/>
-</clipPath>
-</defs>
+<svg width="500" height="422" viewBox="0 0 500 422" fill="none" xmlns="http://www.w3.org/2000/svg">
+<rect y="100" width="50" height="50" fill="#3139FB"/>
+<rect x="50" y="50" width="50" height="50" fill="#3139FB"/>
+<rect x="100" y="50" width="50" height="50" fill="#3139FB"/>
+<rect x="200" y="50" width="50" height="50" fill="#3139FB"/>
+<rect x="250" y="50" width="50" height="50" fill="#3139FB"/>
+<rect x="350" y="50" width="50" height="50" fill="#3139FB"/>
+<rect x="100" width="50" height="50" fill="#3139FB"/>
+<rect x="150" width="50" height="50" fill="#3139FB"/>
+<rect x="200" width="50" height="50" fill="#3139FB"/>
+<rect x="250" width="50" height="50" fill="#3139FB"/>
+<rect x="300" width="50" height="50" fill="#3139FB"/>
+<rect x="350" width="50" height="50" fill="#3139FB"/>
+<rect x="400" y="50" width="50" height="50" fill="#3139FB"/>
+<rect x="50" y="322" width="50" height="50" fill="#3139FB"/>
+<rect x="100" y="322" width="50" height="50" fill="#3139FB"/>
+<rect x="150" y="322" width="50" height="50" fill="#3139FB"/>
+<rect x="200" y="322" width="50" height="50" fill="#3139FB"/>
+<rect x="250" y="322" width="50" height="50" fill="#3139FB"/>
+<rect x="300" y="322" width="50" height="50" fill="#3139FB"/>
+<rect x="350" y="322" width="50" height="50" fill="#3139FB"/>
+<rect x="400" y="322" width="50" height="50" fill="#3139FB"/>
+<rect x="50" y="100" width="50" height="50" fill="#3139FB"/>
+<rect x="50" y="150" width="50" height="50" fill="#3139FB"/>
+<rect x="150" y="150" width="50" height="50" fill="#3139FB"/>
+<rect x="250" y="150" width="50" height="50" fill="#3139FB"/>
+<rect x="350" y="150" width="50" height="50" fill="#3139FB"/>
+<rect x="100" y="222" width="50" height="50" fill="#3139FB"/>
+<rect x="200" y="222" width="50" height="50" fill="#3139FB"/>
+<rect x="300" y="222" width="50" height="50" fill="#3139FB"/>
+<rect x="400" y="222" width="50" height="50" fill="#3139FB"/>
+<rect x="100" y="100" width="50" height="50" fill="#3139FB"/>
+<rect x="150" y="100" width="50" height="50" fill="#3139FB"/>
+<rect x="200" y="100" width="50" height="50" fill="#3139FB"/>
+<rect x="250" y="100" width="50" height="50" fill="#3139FB"/>
+<rect x="300" y="100" width="50" height="50" fill="#3139FB"/>
+<rect x="350" y="100" width="50" height="50" fill="#3139FB"/>
+<rect x="400" y="100" width="50" height="50" fill="#3139FB"/>
+<rect x="450" y="100" width="50" height="50" fill="#3139FB"/>
+<rect y="272" width="50" height="50" fill="#3139FB"/>
+<rect x="50" y="272" width="50" height="50" fill="#3139FB"/>
+<rect x="100" y="272" width="50" height="50" fill="#3139FB"/>
+<rect x="150" y="272" width="50" height="50" fill="#3139FB"/>
+<rect x="200" y="272" width="50" height="50" fill="#3139FB"/>
+<rect x="250" y="272" width="50" height="50" fill="#3139FB"/>
+<rect x="300" y="272" width="50" height="50" fill="#3139FB"/>
+<rect x="350" y="272" width="50" height="50" fill="#3139FB"/>
+<rect x="400" y="272" width="50" height="50" fill="#3139FB"/>
+<rect x="450" y="272" width="50" height="50" fill="#3139FB"/>
+<rect x="100" y="372" width="50" height="50" fill="#3139FB"/>
+<rect x="150" y="372" width="50" height="50" fill="#3139FB"/>
+<rect x="200" y="372" width="50" height="50" fill="#3139FB"/>
+<rect x="250" y="372" width="50" height="50" fill="#3139FB"/>
+<rect x="300" y="372" width="50" height="50" fill="#3139FB"/>
+<rect x="350" y="372" width="50" height="50" fill="#3139FB"/>
 </svg>
