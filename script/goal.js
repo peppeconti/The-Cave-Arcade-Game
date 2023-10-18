@@ -19,6 +19,14 @@ Goal.prototype.update = function (deltaTime) {
   this.angle += deltaTime;
 };
 
+Goal.prototype.scale = function() {
+  while (this.size.x != 0 && this.size.y != 0) {
+    this.size.x -= .01;
+    this.size.y -= .01;
+  }
+
+}
+
 Goal.prototype.size = new Vector(.4, .4);
 
 export default Goal;

@@ -85,6 +85,7 @@ Display.prototype.syncState = function (state, deltaTime, level, timer) {
     this.updateScreen(deltaTime, level, state);
     this.drawGate(state.gate.fragments);
     this.drawBackGround(state);
+    this.drawGoal(state.goal);
     this.showLevel(level);
     this.drawPlayer(state.player);
     timer.delay -= deltaTime;

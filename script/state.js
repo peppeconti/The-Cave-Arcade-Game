@@ -43,6 +43,7 @@ State.prototype.update = function (deltaTime, keys, display, timer) {
     }*/
   }
   if (this.status === "YOU WON" || this.status === "COMPLETED") {
+    this.goal.scale();
     this.level.gate.fragments.forEach((e, i) => {
       if (i === 0) e.update(deltaTime, 1);
       if (i === 1) e.update(deltaTime, -1);
