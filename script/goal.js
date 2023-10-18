@@ -3,6 +3,7 @@ import Vector from "./vector.js";
 let Goal = class Goal {
   constructor(pos) {
     this.pos = pos;
+    this.size = new Vector(0.4, 0.4);
     this.angle = 0;
   }
 
@@ -26,6 +27,6 @@ Goal.prototype.scale = function (deltaTime) {
   }
 };
 
-Goal.prototype.size = new Vector(0.4, 0.4);
+//Goal.prototype.size = new Vector(0.4, 0.4);
 
 export default Goal;
