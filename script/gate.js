@@ -4,6 +4,7 @@ class Fragment {
   constructor(pos) {
     this.pos = pos;
     this.vel = .18;
+    this.start = 0;
   }
 
   static create(pos) {
@@ -13,10 +14,9 @@ class Fragment {
 
 let translation = .45
 
-Fragment.prototype.update = function (time, directionY, gate, timer) {
-    const fragmentsNum = gate.fragments.length;
-    if (timer.limit < translation*fragmentsNum) {
-        timer.limit += time * this.vel;
+Fragment.prototype.update = function (time, directionY) {
+    if (this.start < translation) {
+        this.start += time * this.vel;
         this.pos.y += time * directionY * this.vel;
     }
 };
