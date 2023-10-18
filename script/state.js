@@ -31,7 +31,7 @@ State.prototype.update = function (deltaTime, keys, display, timer) {
   }
   if (this.status === "GAME OVER") {
     this.goal.update(deltaTime);
-    this.level.player.fragments.forEach((e, i) => {
+    this.player.fragments.forEach((e, i) => {
       if (i === 0) e.update(deltaTime, -1, -1);
       if (i === 1) e.update(deltaTime, 1, 1);
       if (i === 2) e.update(deltaTime, -1, 1);

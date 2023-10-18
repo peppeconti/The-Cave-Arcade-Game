@@ -50,17 +50,17 @@ Display.prototype.syncState = function (state, deltaTime, level, timer) {
     timer.delay -= deltaTime;
   }
   if (state.status === "PLAYING") {
-    this.updateScreen(deltaTime, level);
+    this.updateScreen(deltaTime, level, state);
     this.drawGate(state.gate.fragments);
-    this.drawBackGround(level);
+    this.drawBackGround(state);
     this.drawGoal(state.goal);
     this.showLevel(level);
     this.drawPlayer(state.player);
   }
   if (state.status === "GAME OVER") {
-    this.updateScreen(deltaTime, level);
+    this.updateScreen(deltaTime, level, state);
     this.drawGate(state.gate.fragments);
-    this.drawBackGround(level);
+    this.drawBackGround(state);
     this.drawGoal(state.goal);
     this.showLevel(level);
     this.drawFragments(state.player.fragments);
@@ -82,9 +82,9 @@ Display.prototype.syncState = function (state, deltaTime, level, timer) {
     }
   }
   if (state.status === "YOU WON") {
-    this.updateScreen(deltaTime, level);
+    this.updateScreen(deltaTime, level, state);
     this.drawGate(state.gate.fragments);
-    this.drawBackGround(level);
+    this.drawBackGround(state);
     this.showLevel(level);
     this.drawPlayer(state.player);
     timer.delay -= deltaTime;
@@ -105,7 +105,7 @@ Display.prototype.syncState = function (state, deltaTime, level, timer) {
     }
   }
   if (state.status === "COMPLETED") {
-    this.updateScreen(deltaTime, level);
+    this.updateScreen(deltaTime, level, state);
     this.drawGate(state.gate.fragments);
     this.drawBackGround(level);
     this.showLevel(level);
@@ -186,8 +186,8 @@ Display.prototype.drawCountDown = function (timer) {
   );
 };
 
-Display.prototype.drawBackGround = function (level) {
-  level.walls.forEach((e) => {
+Display.prototype.drawBackGround = function (state) {
+  state.walls.forEach((e) => {
     this.cx.fillStyle = "blue";
     this.cx.fillRect(
       (e[0] + this.viewport.left) * scale,
@@ -224,11 +224,11 @@ Display.prototype.drawFragments = function (fragments) {
   });
 };
 
-Display.prototype.updateScreen = function (time, level) {
-  let vel = 5;
+Display.prototype.updateScreen = function (time, level, state) {
+  let vel = 2;
   let screen = this.viewport;
-  let goal = level.goal;
-  let gateFragments = level.gate.fragments;
+  let goal = state.goal;
+  let gateFragments = state.gate.fragments;
   if (screen.left * scale > -(level.width * scale - this.canvas.width)) {
     screen.left -= time * vel;
     goal.pos.x -= time * vel;

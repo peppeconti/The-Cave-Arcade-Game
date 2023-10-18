@@ -40,7 +40,6 @@ async function runGame(plans) {
     // RESETTING TIMER
     timer.delay = 3;
     timer.intervall = 0;
-    timer.limit = 0;
     status !== "NEW GAME" ? newState = "COUNTDOWN" : newState = "START GAME";
     // CHECKING STATUS AFTER RESOLVING PROMISE
     if (status === "NEW LEVEL") {
