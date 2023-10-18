@@ -51,19 +51,19 @@ Display.prototype.syncState = function (state, deltaTime, level, timer) {
   }
   if (state.status === "PLAYING") {
     this.updateScreen(deltaTime, level, state);
-    this.drawGate(state.gate.fragments);
-    this.drawBackGround(state);
+    this.drawGate(level.gate.fragments);
+    this.drawBackGround(level);
     this.drawGoal(state.goal);
     this.showLevel(level);
-    this.drawPlayer(state.player);
+    this.drawPlayer(level.player);
   }
   if (state.status === "GAME OVER") {
     this.updateScreen(deltaTime, level, state);
-    this.drawGate(state.gate.fragments);
-    this.drawBackGround(state);
-    this.drawGoal(state.goal);
+    this.drawGate(level.gate.fragments);
+    this.drawBackGround(level);
+    this.drawGoal(level.goal);
     this.showLevel(level);
-    this.drawFragments(state.player.fragments);
+    this.drawFragments(level.player.fragments);
     timer.delay -= deltaTime;
     if (timer.delay < 0) {
       timer.intervall += deltaTime;
@@ -83,11 +83,11 @@ Display.prototype.syncState = function (state, deltaTime, level, timer) {
   }
   if (state.status === "YOU WON") {
     this.updateScreen(deltaTime, level, state);
-    this.drawGate(state.gate.fragments);
-    this.drawBackGround(state);
-    this.drawGoal(state.goal);
+    this.drawGate(level.gate.fragments);
+    this.drawBackGround(level);
+    this.drawGoal(level.goal);
     this.showLevel(level);
-    this.drawPlayer(state.player);
+    this.drawPlayer(level.player);
     timer.delay -= deltaTime;
     if (timer.delay < 0) {
       timer.intervall += deltaTime;
@@ -107,10 +107,10 @@ Display.prototype.syncState = function (state, deltaTime, level, timer) {
   }
   if (state.status === "COMPLETED") {
     this.updateScreen(deltaTime, level, state);
-    this.drawGate(state.gate.fragments);
+    this.drawGate(level.gate.fragments);
     this.drawBackGround(level);
     this.showLevel(level);
-    this.drawPlayer(state.player);
+    this.drawPlayer(level.player);
     timer.delay -= deltaTime;
     if (timer.delay < 0) {
       timer.intervall += deltaTime;
