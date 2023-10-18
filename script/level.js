@@ -5,8 +5,8 @@ import Gate from "./gate.js";
 
 const levelMap = {
   ".": "empty",
-  "|": "wall",
-  "i": Gate,
+  "□": "wall",
+  "|": Gate,
   "+": Goal,
   "@": Player,
 };
