@@ -48,6 +48,9 @@ State.prototype.update = function (deltaTime, keys, display, timer) {
       if (i === 0) e.update(deltaTime, 1);
       if (i === 1) e.update(deltaTime, -1);
     });
+    let distance = this.player.pos.subtr(this.goal.pos).add(this.player.size.mult(.5));
+    this.player.pos = this.player.pos.subtr(distance);
+    
   }
   if (keys.Enter && this.status === "START GAME") {
     return new State(this.level, "COUNTDOWN");
