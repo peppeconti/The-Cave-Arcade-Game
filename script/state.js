@@ -1,5 +1,5 @@
 import audioFiles from "./audio.js";
-import { controls } from "./utils.js";
+import { controls, reset } from "./utils.js";
 
 audioFiles.gameOver.addEventListener("ended", () => (controls.gameOver = true));
 
@@ -73,7 +73,7 @@ State.prototype.update = function (deltaTime, keys, display, timer) {
       this.status === "COMPLETED")
   ) {
     display.canvas.remove();
-    audioFiles.gameOver.pause();
+    reset(audioFiles.gameOver);
     switch (this.status) {
       case "GAME OVER":
         return new State(this.level, "RESTART");

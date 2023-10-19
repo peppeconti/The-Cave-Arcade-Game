@@ -4,8 +4,8 @@ const timer = {
 };
 
 const controls = {
-  gameOver: false
-}
+  gameOver: false,
+};
 
 const scale = 35;
 
@@ -31,4 +31,9 @@ const arrowKeys = trackKeys([
   "Space",
 ]);
 
-export { timer, controls, scale, arrowKeys };
+function reset(audio) {
+  audio.pause();
+  audio.currentTime = 0;
+}
+
+export { timer, controls, scale, arrowKeys, reset };
