@@ -3,7 +3,7 @@ import { arrowKeys } from "./script/utils.js";
 import Level from "./script/level.js";
 import State from "./script/state.js";
 import Display from "./script/display.js";
-import { timer } from "./script/utils.js";
+import { timer, controls } from "./script/utils.js";
 
 function animate(deltaTimeFunc) {
   let lastTime = 0;
@@ -40,6 +40,7 @@ async function runGame(plans) {
     // RESETTING TIMER
     timer.delay = 3;
     timer.intervall = 0;
+    controls.gameOver = false;
     status !== "NEW GAME" ? newState = "COUNTDOWN" : newState = "START GAME";
     // CHECKING STATUS AFTER RESOLVING PROMISE
     if (status === "NEW LEVEL") {

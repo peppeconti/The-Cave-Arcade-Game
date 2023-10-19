@@ -1,7 +1,11 @@
 const timer = {
   delay: 3,
-  intervall: 0
+  intervall: 0,
 };
+
+const controls = {
+  gameOver: false
+}
 
 const scale = 35;
 
@@ -27,4 +31,4 @@ const arrowKeys = trackKeys([
   "Space",
 ]);
 
-export { timer, scale, arrowKeys };
+export { timer, controls, scale, arrowKeys };
