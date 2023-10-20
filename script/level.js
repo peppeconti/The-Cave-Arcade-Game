@@ -23,6 +23,7 @@ let Level = class Level {
     this.goal;
     this.gate;
     this.walls = [];
+    this.externalWalls = [];
     this.isLast = plans.indexOf(level) === plans.length - 1;
     this.levelNum = plans.indexOf(level) + 1;
 
@@ -31,10 +32,20 @@ let Level = class Level {
         let type = levelMap[ch];
         if (typeof type === "string") {
           if (type === "wall") {
+            // SEARCHING FOR WALLS SIGNIFICANT FOR COLLISION DETECTION
+            if (rows[y][x + 1] === ".") {
+              this.externalWalls.push([x, y]);
+            } else if (rows[y][x - 1] === ".") {
+              this.externalWalls.push([x, y]);
+            } else if (rows[y + 1] && rows[y+1][x] === ".") {
+              this.externalWalls.push([x, y]);
+            } else if (rows[y - 1] && rows[y-1][x] === ".") {
+              this.externalWalls.push([x, y]);
+            } 
             this.walls.push([x, y]);
             return type;
           }
-          return type
+          return type;
         }
         if (typeof type === "function") {
           if (type.type() === "player") {

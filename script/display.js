@@ -188,8 +188,8 @@ Display.prototype.drawCountDown = function (timer) {
   );
 };
 
-Display.prototype.drawBackGround = function (state) {
-  state.walls.forEach((e) => {
+Display.prototype.drawBackGround = function (level) {
+  level.walls.forEach((e) => {
     this.cx.fillStyle = "blue";
     this.cx.fillRect(
       (e[0] + this.viewport.left) * scale,
@@ -227,7 +227,7 @@ Display.prototype.drawFragments = function (fragments) {
 };
 
 Display.prototype.updateScreen = function (time, level, state) {
-  let vel = 5;
+  let vel = 1.5;
   let screen = this.viewport;
   let goal = level.goal;
   let gateFragments = level.gate.fragments;

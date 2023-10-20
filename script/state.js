@@ -9,7 +9,7 @@ let State = class State {
   constructor(level, status) {
     this.level = level;
     this.player = level.player;
-    this.walls = level.walls;
+    this.walls = level.externalWalls;
     this.goal = level.goal;
     this.gate = level.gate;
     this.status = status;
