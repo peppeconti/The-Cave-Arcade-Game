@@ -227,7 +227,7 @@ Display.prototype.drawFragments = function (fragments) {
 };
 
 Display.prototype.updateScreen = function (time, level, state) {
-  let vel = 1.5;
+  let vel = 5;
   let screen = this.viewport;
   let goal = state.goal;
   let gateFragments = state.gate.fragments;
@@ -235,6 +235,7 @@ Display.prototype.updateScreen = function (time, level, state) {
     screen.left -= time * vel;
     goal.pos.x -= time * vel;
     gateFragments.forEach((e) => (e.pos.x -= time * vel));
+    if (state.status === "YOU WON" || state.status === "COMPLETED") level.player.pos.x -= time * vel;
   }
 };
 
