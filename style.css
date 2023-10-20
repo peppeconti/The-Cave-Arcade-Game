@@ -11,4 +11,5 @@ body {
 
 canvas {
     background-color: #2d2d2d;
+    cursor: none;
 }
