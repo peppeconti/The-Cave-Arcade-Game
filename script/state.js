@@ -3,6 +3,8 @@ import { controls, reset } from "./utils.js";
 
 audioFiles.gameOver.addEventListener("ended", () => (controls.gameOver = true));
 
+document.addEventListener("visibilitychange", () => audioFiles.countdown.pause());
+
 let State = class State {
   constructor(level, status) {
     this.level = level;
