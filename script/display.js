@@ -53,7 +53,7 @@ Display.prototype.syncState = function (state, deltaTime, level, timer) {
     this.updateScreen(deltaTime, level, state);
     this.drawGate(level.gate.fragments);
     this.drawBackGround(level);
-    this.drawGoal(state.goal);
+    this.drawGoal(level.goal);
     this.showLevel(level);
     this.drawPlayer(level.player);
   }
@@ -229,8 +229,8 @@ Display.prototype.drawFragments = function (fragments) {
 Display.prototype.updateScreen = function (time, level, state) {
   let vel = 5;
   let screen = this.viewport;
-  let goal = state.goal;
-  let gateFragments = state.gate.fragments;
+  let goal = level.goal;
+  let gateFragments = level.gate.fragments;
   if (screen.left * scale > -(level.width * scale - this.canvas.width)) {
     screen.left -= time * vel;
     goal.pos.x -= time * vel;
