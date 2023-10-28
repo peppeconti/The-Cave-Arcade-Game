@@ -1,3 +1,5 @@
+import { controls } from "./utils.js";
+
 const audioFiles = {
     'gameOver': new Audio("./audio/lost_game.mp3"),
     'shipDestroy': new Audio("./audio/game_over.mp3"),
@@ -6,5 +8,15 @@ const audioFiles = {
     'countdown': new Audio("./audio/countdown.mp3"),
     'moving': new Audio("./audio/moving.mp3")
 }
+
+const audiosArray = Object.keys(audioFiles).map((key) => audioFiles[key]);
+
+const promises = audiosArray.map(audio => {
+  return new Promise(response => {
+    audio.addEventListener("canplaythrough", () => response(audio));
+  });
+});
+
+Promise.all(promises).then(() => controls.audioLoaded = true);
 
 export default audioFiles

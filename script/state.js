@@ -3,7 +3,9 @@ import { controls, reset } from "./utils.js";
 
 audioFiles.gameOver.addEventListener("ended", () => (controls.gameOver = true));
 
-document.addEventListener("visibilitychange", () => audioFiles.countdown.pause());
+document.addEventListener("visibilitychange", () =>
+  audioFiles.countdown.pause()
+);
 
 let State = class State {
   constructor(level, status) {
@@ -58,8 +60,8 @@ State.prototype.update = function (deltaTime, keys, display, timer) {
     let distance = this.player.pos
       .subtr(this.goal.pos)
       .add(this.player.size.mult(0.5));
-    this.player.pos.x -= deltaTime*distance.x*this.player.acceleration*2;
-    this.player.pos.y -= deltaTime*distance.y*this.player.acceleration*2;
+    this.player.pos.x -= deltaTime * distance.x * this.player.acceleration * 2;
+    this.player.pos.y -= deltaTime * distance.y * this.player.acceleration * 2;
   }
   if (keys.Enter && this.status === "START GAME") {
     return new State(this.level, "COUNTDOWN");

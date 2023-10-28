@@ -5,6 +5,7 @@ const timer = {
 
 const controls = {
   gameOver: false,
+  audioLoaded: false
 };
 
 const scale = 35;

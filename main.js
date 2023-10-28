@@ -19,7 +19,6 @@ function animate(deltaTimeFunc) {
 }
 
 function runLevel(level, status, lastLevel) {
-  console.log(level);
   let display = new Display(document.body, level);
   let state = new State(level, status, lastLevel);
   return new Promise((resolve) => {
