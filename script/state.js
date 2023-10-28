@@ -19,6 +19,11 @@ let State = class State {
 };
 
 State.prototype.update = function (deltaTime, keys, display, timer) {
+  if (controls.audioLoaded) {
+    controls.audioLoaded = !controls.audioLoaded;
+    return new State(this.level, "START GAME");
+  }
+
   if (this.status === "PLAYING" && timer.delay < 0) {
     //audioFiles.space.play();
     this.player.update(deltaTime, keys, display);

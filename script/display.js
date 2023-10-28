@@ -23,6 +23,20 @@ Display.prototype.clearDisplay = function () {
 
 Display.prototype.syncState = function (state, deltaTime, level, timer) {
   this.clearDisplay();
+  if (state.status === "LOADING") {
+    timer.intervall += deltaTime;
+    if (timer.intervall > 1.25) timer.intervall = 0;
+    if (timer.intervall > 0 && timer.intervall < 0.75) {
+      this.cx.fillStyle = "white";
+      this.cx.font = "50px 'Wallpoet'";
+      this.cx.textAlign = "center";
+      this.cx.fillText(
+        "LOADING...",
+        this.canvas.width / 2,
+        this.canvas.height / 2 + 15
+      );
+    }
+  }
   if (state.status === "START GAME") {
     timer.intervall += deltaTime;
     if (timer.intervall > 1.25) timer.intervall = 0;
@@ -235,7 +249,8 @@ Display.prototype.updateScreen = function (time, level, state) {
     screen.left -= time * vel;
     goal.pos.x -= time * vel;
     gateFragments.forEach((e) => (e.pos.x -= time * vel));
-    if (state.status === "YOU WON" || state.status === "COMPLETED") level.player.pos.x -= time * vel;
+    if (state.status === "YOU WON" || state.status === "COMPLETED")
+      level.player.pos.x -= time * vel;
   }
 };
 
@@ -243,11 +258,7 @@ Display.prototype.showLevel = function (level) {
   this.cx.fillStyle = "white";
   this.cx.font = "20px 'Wallpoet'";
   this.cx.textAlign = "left";
-  this.cx.fillText(
-    `Level ${level.levelNum}`,
-    15,
-    25
-  );
-}
+  this.cx.fillText(`Level ${level.levelNum}`, 15, 25);
+};
 
 export default Display;

@@ -33,7 +33,7 @@ function runLevel(level, status, lastLevel) {
 }
 
 async function runGame(plans) {
-  let newState = "START GAME";
+  let newState = "LOADING";
   for (let level = 0; level < plans.length;) {
     // WAITING FOR PROMISE RESOLVING
     let status = await runLevel(new Level(plans[level], plans), newState);
