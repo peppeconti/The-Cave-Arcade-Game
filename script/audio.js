@@ -21,7 +21,7 @@ const promises = audiosArray.map(
 Promise.all(promises).then(() => {
   setTimeout(() => {
     controls.audioLoaded = !controls.audioLoaded;
-  }, 7000);
+  }, 5000);
 });
 
 export default audioFiles;
