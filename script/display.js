@@ -24,7 +24,8 @@ Display.prototype.clearDisplay = function () {
 Display.prototype.syncState = function (state, deltaTime, level, timer) {
   this.clearDisplay();
   if (state.status === "LOADING") {
-    timer.intervall += deltaTime;
+    this.drawSpinner(level.goal);
+    /*timer.intervall += deltaTime;
     if (timer.intervall > 1.25) timer.intervall = 0;
     if (timer.intervall > 0 && timer.intervall < 0.75) {
       this.cx.fillStyle = "white";
@@ -35,7 +36,7 @@ Display.prototype.syncState = function (state, deltaTime, level, timer) {
         this.canvas.width / 2,
         this.canvas.height / 2 + 15
       );
-    }
+    }*/
   }
   if (state.status === "START GAME") {
     timer.intervall += deltaTime;
@@ -169,6 +170,24 @@ Display.prototype.drawGoal = function (goal) {
     goal.size.y * scale
   );
   this.cx.fill();
+  this.cx.closePath();
+  this.cx.restore();
+};
+
+Display.prototype.drawSpinner = function (goal) {
+  this.cx.save();
+  this.cx.translate(this.canvas.width / 2, this.canvas.height / 2);
+  this.cx.rotate(goal.angle);
+  this.cx.lineWidth = 7.5;
+  this.cx.strokeStyle = 'white';
+  this.cx.beginPath();
+  this.cx.rect(
+    -(goal.size.x * scale * 6) / 2,
+    -(goal.size.y * scale * 6) / 2,
+    goal.size.x * scale * 6,
+    goal.size.y * scale * 6
+  );
+  this.cx.stroke();
   this.cx.closePath();
   this.cx.restore();
 };

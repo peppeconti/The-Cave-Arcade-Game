@@ -19,6 +19,9 @@ let State = class State {
 };
 
 State.prototype.update = function (deltaTime, keys, display, timer) {
+  if (this.status === "LOADING") {
+    this.goal.update(deltaTime*1.5);
+  }
   if (controls.audioLoaded) {
     controls.audioLoaded = !controls.audioLoaded;
     return new State(this.level, "START GAME");
